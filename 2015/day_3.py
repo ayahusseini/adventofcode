@@ -7,7 +7,7 @@ input = list of rucksacks
         - item = single uppercase or lowercase letters
     - Each compartment has the same number of items
 '''
-TEST_FILE = "inputs/day_3_test.txt"
+FILE = "inputs/day_3_input.txt"
 
 
 def get_rucksacks(filename: str) -> list[str]:
@@ -31,7 +31,7 @@ def get_match(compartments: list[str, str]) -> str:
     matches = set(compartments[0]).intersection(compartments[1])
     if len(matches) != 1:
         raise ValueError(
-            "There should be exactly one match between the compartments")
+            f"There should be exactly one match between the compartments.\n The matches found are {matches} for compartments {compartments}")
     match, = matches
     return match
 
@@ -51,10 +51,12 @@ def get_priority(item: str) -> int:
 
 def star_1(filename: str) -> int:
     '''Returns the solution to problem 1'''
-    c = get_compartments(filename)
+    r = get_rucksacks(filename)
+    c = [get_compartments(rucksack) for rucksack in r]
+
     priorities = [get_priority(get_match(compartment)) for compartment in c]
     return sum(priorities)
 
 
 if __name__ == "__main__":
-    print(star_1(TEST_FILE))
+    print(star_1(FILE))
