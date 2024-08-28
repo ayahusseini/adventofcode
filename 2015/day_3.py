@@ -43,7 +43,18 @@ def get_alphabetic_position(letter: str) -> int:
 
 def get_priority(item: str) -> int:
     """Returns the priority of an item"""
+    if item.islower():
+        return get_alphabetic_position(item)
+    else:
+        return get_alphabetic_position(item) + 26
+
+
+def star_1(filename: str) -> int:
+    '''Returns the solution to problem 1'''
+    c = get_compartments(filename)
+    priorities = [get_priority(get_match(compartment)) for compartment in c]
+    return sum(priorities)
 
 
 if __name__ == "__main__":
-    get_rucksacks(TEST_FILE)
+    print(star_1(TEST_FILE))

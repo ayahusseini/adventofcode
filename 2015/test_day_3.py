@@ -1,6 +1,6 @@
 import pytest
 
-from day_3 import get_rucksacks, get_compartments, get_match, get_alphabetic_position
+from day_3 import get_rucksacks, get_compartments, get_match, get_alphabetic_position, get_priority
 
 TEST_FILE = "inputs/day_3_test.txt"
 
@@ -54,3 +54,8 @@ def test_get_alphabetic_position(letter, pos):
 @pytest.mark.parametrize("letter,pos", POSITIONS_UPPERCASE)
 def test_get_alphabetic_position_uppercase(letter, pos):
     assert get_alphabetic_position(letter) == pos
+
+
+@pytest.mark.parametrize("letter,priority", [("p", 16), ("L", 38)])
+def test_priority(letter, priority):
+    assert get_priority(letter) == priority
