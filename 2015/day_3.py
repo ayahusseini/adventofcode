@@ -25,7 +25,7 @@ def get_compartments(line: str) -> list[str, str]:
     return [line[:midpoint], line[midpoint:]]
 
 
-def get_match(compartments: list[str, str]):
+def get_match(compartments: list[str, str]) -> str:
     '''Find the matching item in the compartments. 
     Raises an error if there is less than exactly one match'''
     matches = set(compartments[0]).intersection(compartments[1])
@@ -34,6 +34,15 @@ def get_match(compartments: list[str, str]):
             "There should be exactly one match between the compartments")
     match, = matches
     return match
+
+
+def get_alphabetic_position(letter: str) -> int:
+    '''Returns the position in the alphabet. Case insensitive.'''
+    return ord(letter.lower()) - 96
+
+
+def get_priority(item: str) -> int:
+    """Returns the priority of an item"""
 
 
 if __name__ == "__main__":

@@ -1,6 +1,6 @@
 import pytest
 
-from day_3 import get_rucksacks, get_compartments, get_match
+from day_3 import get_rucksacks, get_compartments, get_match, get_alphabetic_position
 
 TEST_FILE = "inputs/day_3_test.txt"
 
@@ -39,3 +39,18 @@ def test_matches_raises_error_if_more_than_1(l):
     with pytest.raises(ValueError):
 
         get_match(l)
+
+
+ALPHABET = 'abcdefghijklmnopqrstuvwxyz'
+POSITIONS = [(l, i+1) for i, l in enumerate(ALPHABET)]
+POSITIONS_UPPERCASE = [(l, i+1) for i, l in enumerate(ALPHABET.upper())]
+
+
+@pytest.mark.parametrize("letter,pos", POSITIONS)
+def test_get_alphabetic_position(letter, pos):
+    assert get_alphabetic_position(letter) == pos
+
+
+@pytest.mark.parametrize("letter,pos", POSITIONS_UPPERCASE)
+def test_get_alphabetic_position_uppercase(letter, pos):
+    assert get_alphabetic_position(letter) == pos
