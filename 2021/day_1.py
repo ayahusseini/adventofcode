@@ -1,5 +1,7 @@
 '''Solve advent of code day_1'''
 
+FILE = "inputs/day_1_input.txt"
+
 
 def read_input(filename: str) -> list[str]:
     with open(filename, "r") as f:
@@ -34,7 +36,7 @@ def num_measurements_bigger_than_prev(m: list) -> int:
 
 
 if __name__ == "__main__":
-    measurements = get_measurements("day_1_input.txt")
+    measurements = get_measurements(FILE)
     # task 1
     print(num_measurements_bigger_than_prev(measurements))
     # task 2

@@ -1,4 +1,6 @@
+'''Solution to day 2'''
 
+FILE = "inputs/day_2_input.txt"
 DIRECTIONS = {
     "forward": [1, 0],
     "up": [0, -1],
@@ -53,9 +55,6 @@ def find_net_direction_with_aim(filename: str) -> list[int, int]:
     with open(filename, "r") as f:
         for line in f.readlines():
 
-            '''if not line:
-                break'''
-
             key, val = line.replace("\n", "").strip().split()
 
             next_increment = multiply_scalar(int(val), increments[key](net))
@@ -84,13 +83,8 @@ def find_net_dir_with_aim_2(filename: str):
 
 
 if __name__ == "__main__":
-    c = get_net_directions_count("day_2_input.txt")
+    c = get_net_directions_count(FILE)
 
-    # net = find_net_direction(c)
-    # print(net[0]*net[1])
-
-    print(find_net_direction_with_aim("day_2_input.txt"))
-    net2 = find_net_dir_with_aim_2("day_2_input.txt")
+    print(find_net_direction_with_aim(FILE))
+    net2 = find_net_dir_with_aim_2(FILE)
     print(net2)
-
-    # 1451210346
