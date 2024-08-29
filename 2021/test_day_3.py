@@ -1,6 +1,6 @@
 import pytest
 
-from day_3 import extract_report, convert_binary_to_decimal, get_most_freq_nth_letter, get_gamma_rate, get_epsilon_rate
+from day_3 import extract_report, convert_binary_to_decimal, get_most_freq_nth_letter, get_gamma_rate, get_epsilon_rate, get_filtered_down
 
 TEST_FILE = "inputs/day_3_test_input.txt"
 
@@ -31,3 +31,11 @@ def test_get_gamma_rate(test_binary):
 
 def test_get_epsilon_rate(test_binary):
     assert get_epsilon_rate(test_binary) == 9
+
+
+def test_get_oxygen_rate_in_binary(test_binary):
+    assert get_filtered_down(test_binary, opposite=False) == "10111"
+
+
+def test_get_co2_rate_in_binary(test_binary):
+    assert get_filtered_down(test_binary, opposite=True) == "01010"
