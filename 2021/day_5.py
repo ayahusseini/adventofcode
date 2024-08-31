@@ -1,5 +1,4 @@
 '''Solution to day 5 2021'''
-import numpy as np
 
 TEST_FILE = "inputs/day_5_test.txt"
 INPUT_FILE = "inputs/day_5_input.txt"
