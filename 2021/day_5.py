@@ -49,16 +49,22 @@ def find_coverage(start: list, end: list, ignore_diagonals: bool = True) -> list
             return [(start[idx], i) if idx == 0 else (i, start[idx]) for i in range(start[idx-1], end[idx-1]+1)
                     ]
 
-    if ignore_diagonals:
-        return []
+    if not ignore_diagonals:
+        # lowest horizontal coordinate is 'start'
+        start, end = sorted([start, end], key=lambda coord: coord[0])
+
+        vertical_step = -1 if start[1] > end[1] else 1
+        return [(start[0] + i, start[1] + i*vertical_step) for i in range(0, end[0]-start[0]+1)]
+
+    return []
 
 
-def find_double_overlaps(point_pairs: list):
+def find_double_overlaps(point_pairs: list, ignore_diagonals: bool = True):
     '''Returns the list of points where lines overlap at least twice'''
     covered_once = set([])
     covered_more_than_once = set([])
     for pair in point_pairs:
-        coverage = find_coverage(*pair)
+        coverage = find_coverage(*pair, ignore_diagonals=ignore_diagonals)
 
         overlaps = covered_once.intersection(coverage)
 
@@ -68,12 +74,19 @@ def find_double_overlaps(point_pairs: list):
     return covered_more_than_once
 
 
-def one_star(filename: str):
+def count_double_overlaps(filename: str, inc_diagonal: bool):
     '''Return the number of points where lines cross more than once'''
     lines = load_file_lines(filename)
     points_list = map_lines_to_vectors(lines)
-    return len(find_double_overlaps(points_list))
+    return len(find_double_overlaps(points_list, ignore_diagonals=not inc_diagonal))
 
 
 if __name__ == "__main__":
-    print(one_star(INPUT_FILE))
+    print(f"One star solution in test is {
+          count_double_overlaps(TEST_FILE, False)}")
+    print(f"Two star solution in test is {
+          count_double_overlaps(TEST_FILE, True)}")
+    print(f"One star solution is {
+          count_double_overlaps(INPUT_FILE, False)}")
+    print(f"Two star solution is {
+          count_double_overlaps(INPUT_FILE, True)}")

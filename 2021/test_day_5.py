@@ -42,3 +42,13 @@ def test_get_endpoints_gives_expected_result(file_lines, endpoints):
 ])
 def test_find_coverage(start, end, coverage):
     assert find_coverage(start, end) == coverage
+
+
+@pytest.mark.parametrize("start, end, coverage", [
+    ([0, 1], [1, 2], [(0, 1), (1, 2)]),
+    ([0, 1], [1, 0], [(0, 1), (1, 0)]),
+    ([1, 1], [3, 3], [(1, 1), (2, 2), (3, 3)]),
+    ([9, 7], [7, 9], [(7, 9), (8, 8), (9, 7)])
+])
+def test_find_coverage_for_diagonals(start, end, coverage):
+    assert find_coverage(start, end, ignore_diagonals=False) == coverage
