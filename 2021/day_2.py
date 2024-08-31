@@ -11,7 +11,6 @@ In the two star case, the new orientation after an instruction depends on a sepa
 import numpy as np
 
 FILE = "inputs/day_2_input.txt"
-TEST_FILE = "inputs/day_2_test_input.txt"
 
 
 def read_input_file(filename: str) -> list[list]:

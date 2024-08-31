@@ -1,79 +1,79 @@
-'''Solution to day_5 2021'''
-
+'''Solution to day 5 2021'''
+import numpy as np
 
 TEST_FILE = "inputs/day_5_test.txt"
 INPUT_FILE = "inputs/day_5_input.txt"
+COORDINATE_SEPARATOR = " -> "
+
+# extract coordinates
 
 
-def load_endpoints(filename: str) -> list[list[tuple]]:
-    '''Return a list of endpoints. item contains [(x1,y1),(x2,y2)]'''
-    endpoints = []
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-        for line in lines:
-            line = line.replace("\n", "")
-            start_string, end_string = line.replace(" ", "").split("->")
-            start_coord = convert_coordinate_string(start_string)
-            end_coord = convert_coordinate_string(end_string)
-            endpoints.append([start_coord, end_coord])
-    return endpoints
+def get_point_from_string(coords: str) -> list:
+    '''Returns a coordinate as a list'''
+
+    return [int(c) for c in coords.split(',')]
 
 
-def convert_coordinate_string(coord: str) -> tuple:
-    return tuple([int(i) for i in coord.split(",")])
+def split_line_coords(line: str) -> list[str]:
+    '''Split a line into text representing the start and end coordinates'''
+    return line.strip().split(COORDINATE_SEPARATOR)
 
 
-def is_straight(start, end):
-    x1, y1 = start
-    x2, y2 = end
-    return x1 == x2 or y1 == y2
+def load_file_lines(filename: str) -> list[str]:
+    '''Loads the file lines as a list'''
+
+    with open(filename, "r") as f:
+        lines = [l.replace("\n", "").strip() for l in f.readlines()]
+    return lines
 
 
-def find_coverage_of_straight_line(start, end):
-    '''Return the list of points that a straight line would cover with start and endpoints'''
-    x1, y1 = start
-    x2, y2 = end
-    is_horizontal = y1 == y2
-    is_vertical = x1 == x2
-    coverage = []
-    if is_horizontal:
-        x = [x1, x2]
-        x.sort()
-        for x_coord in range(x[0], x[1]+1):
-            coverage.append((x_coord, y1))
-    elif is_vertical:
-        y = [y1, y2]
-        y.sort()
-        for y_coord in range(y[0], y[1]+1):
-            coverage.append((x1, y_coord))
-    return coverage
+def map_lines_to_vectors(lines: list) -> list:
+    '''Takes a list of strings representing a pair of coordinates, maps them into a list of coordinate pairs.'''
+
+    return list(map(lambda line: [get_point_from_string(s)
+                                  for s in split_line_coords(line)], lines))
 
 
-def create_coverage_counter(points_covered: list) -> dict:
-    counter = {f"{point}": points_covered.count(
-        point) for point in points_covered}
-    return counter
+# determine coverage
 
 
-def one_star(filename):
-    endpoints = load_endpoints(filename)
-    non_diag = list(filter(lambda x: is_straight(x[0], x[1]), endpoints))
-    coverage = []
-    counter = 0
-    for i, endpoints in enumerate(non_diag):
-        print(f"handling line {i}")
-        s, e = endpoints
+def find_coverage(start: list, end: list, ignore_diagonals: bool = True) -> list[tuple]:
+    '''Returns a set of coordinates that start -> end would cover.'''
 
-        new_coverage = find_coverage_of_straight_line(s, e)
-        print("found_new_cov")
-        coverage += new_coverage
+    for idx in (0, 1):
 
-    counter = create_coverage_counter(coverage)
+        if start[idx] == end[idx]:
 
-    more_than_2 = list(filter(lambda x: x[1] > 1, counter.items()))
-    return len(more_than_2)
+            start, end = sorted([start, end], key=lambda coord: coord[idx-1])
+
+            return [(start[idx], i) if idx == 0 else (i, start[idx]) for i in range(start[idx-1], end[idx-1]+1)
+                    ]
+
+    if ignore_diagonals:
+        return []
+
+
+def find_double_overlaps(point_pairs: list):
+    '''Returns the list of points where lines overlap at least twice'''
+    covered_once = set([])
+    covered_more_than_once = set([])
+    for pair in point_pairs:
+        coverage = find_coverage(*pair)
+
+        overlaps = covered_once.intersection(coverage)
+
+        covered_more_than_once.update(overlaps)
+        covered_once.update(set(coverage) - covered_once)
+
+    return covered_more_than_once
+
+
+def one_star(filename: str):
+    '''Return the number of points where lines cross more than once'''
+    lines = load_file_lines(filename)
+    points_list = map_lines_to_vectors(lines)
+    return len(find_double_overlaps(points_list))
 
 
 if __name__ == "__main__":
-
     print(one_star(INPUT_FILE))
