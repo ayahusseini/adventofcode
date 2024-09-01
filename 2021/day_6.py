@@ -1,10 +1,15 @@
 '''Solution to day 6 2021'''
+from collections import defaultdict
 
 TEST_FILE = "inputs/day_6_test_input.txt"
 INPUT_FILE = "inputs/day_6_input.txt"
 SEPARATOR = ","
-BIRTHSPAN = 7
-NUM_DAYS = 80
+
+ADULT_BIRTH_CYCLE = 7
+CHILD_INITIAL_STATE = 8
+
+NUM_DAYS_ONE_STAR = 80
+
 NUM_DAYS_TWO_STAR = 256
 
 
@@ -17,40 +22,47 @@ def load_file(filename: str) -> list[int]:
     return [int(s) for s in as_strings if s]
 
 
-def simulate_day(current_state: list[int]):
-    '''Returns the next_state'''
-    new_state = [i-1 if i > 0 else 6 for i in current_state]
-    just_birthed = new_state.count(
-        BIRTHSPAN - 1) - current_state.count(BIRTHSPAN)
+def update_state_one_day(curr_state: dict) -> dict:
+    '''Updates the state'''
 
-    return [*new_state, *[8]*just_birthed]
+    new_state = defaultdict(lambda: 0)
+
+    for state, count in curr_state.items():
+        if state == 0:
+            new_state[CHILD_INITIAL_STATE] += count
+            new_state[ADULT_BIRTH_CYCLE - 1] += count
+        else:
+            new_state[state - 1] += count
+
+    return new_state
 
 
-def simulate_n_days(n: int, initial_state: int):
-    '''Returns the state after n days'''
-    for _ in range(n):
-        initial_state = simulate_day(initial_state)
+def update_state_n_days(initial_state: dict, num_days) -> dict:
+    '''Updates the state dictionary after num_days have passed'''
+
+    for _ in range(num_days):
+        initial_state = update_state_one_day(initial_state)
     return initial_state
 
 
-def one_star(filename: str) -> int:
-    '''Count the number of fish after some days'''
-    initial = load_file(filename)
-    return len(simulate_n_days(NUM_DAYS, initial))
+def find_total_population_after_n_days(initial_state_list: list, days: int) -> int:
+    '''Given a list of initial states, return the total population after n days'''
+    state = {i: initial_state_list.count(i) for i in initial_state_list}
+    return sum([v for v in update_state_n_days(state, days).values()])
 
 
-def two_star(filename: str) -> int:
-    '''Count the number of fish after some days'''
-    initial = load_file(filename)
-    return len(simulate_n_days(NUM_DAYS_TWO_STAR, initial))
+def one_star(filename: str):
+    '''Returns the one star solution'''
+    state = load_file(filename)
+    return find_total_population_after_n_days(state, NUM_DAYS_ONE_STAR)
+
+
+def two_star(filename: str):
+    '''Returns the one star solution'''
+    state = load_file(filename)
+    return find_total_population_after_n_days(state, NUM_DAYS_TWO_STAR)
 
 
 if __name__ == "__main__":
-    print(f"One star solution in test is {
-          one_star(TEST_FILE)}")
-    print(f"Two star solution in test is {
-        two_star(TEST_FILE)}")
-    print(f"One star solution is {
-          one_star(INPUT_FILE)}")
-    print(f"Two star solution is {
-        two_star(INPUT_FILE)}")
+    print(f"One star solution is {one_star(INPUT_FILE)}")
+    print(f"Two star solution is {two_star(INPUT_FILE)}")
