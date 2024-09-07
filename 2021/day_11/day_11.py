@@ -15,7 +15,7 @@ find the total number of flashes after 100 steps
 '''
 
 INPUT_FILE = "inputs/day_11_input.txt"
-TEST_FILE = "inputs/day_11_test_input_2.txt"
+TEST_FILE = "inputs/day_11_test_input.txt"
 
 
 def load_file(filename: str) -> list[list[int]]:
@@ -64,8 +64,9 @@ def increment_arr(increment: int, arr: list) -> list:
     return arr
 
 
-def update_state(arr: list[list]) -> list[list]:
-    '''Perform one update step.'''
+def update_state(arr: list[list]) -> int:
+    '''Perform one update step.
+    Return the number of points that have flashed'''
     dim = len(arr)
 
     # increase all points by 1
@@ -93,14 +94,23 @@ def update_state(arr: list[list]) -> list[list]:
     for idx in already_considered:
         i, j = idx
         arr[i][j] = 0
-    return arr
+
+    return len(already_considered)
+
+
+def count_flashes(starting_grid: list[list], n_steps: int) -> int:
+    '''Return the total number of flashes after n_steps'''
+    counter = 0
+    for _ in range(n_steps):
+        counter += update_state(starting_grid)
+    return counter
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    lines = load_file(filename)
-    print(lines)
-    return update_state(lines)
+    arr = load_file(filename)
+
+    return count_flashes(arr, 100)
 
 
 def two_star(filename: str):

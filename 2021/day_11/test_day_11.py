@@ -1,6 +1,6 @@
 import pytest
 
-from day_11 import get_adjacent, get_flashed, get_all_idcs, get_item, update_state
+from day_11 import get_adjacent, get_flashed, get_all_idcs, get_item, update_state, count_flashes
 
 
 @pytest.fixture
@@ -106,19 +106,39 @@ def test_get_flashed_with_exclusion():
 
 
 def test_update_state(grid1, grid1_update_once):
-    assert update_state(grid1) == grid1_update_once
+    update_state(grid1)
+    assert grid1 == grid1_update_once
 
 
 def test_update_state_twice(grid1, grid1_update_twice):
     update_state(grid1)
-    assert update_state(grid1) == grid1_update_twice
+    update_state(grid1)
+    assert grid1 == grid1_update_twice
 
 
 def test_update_state_small(grid2, grid2_update_once):
-    assert update_state(grid2) == grid2_update_once
+    update_state(grid2)
+    assert grid2 == grid2_update_once
 
 
 def test_update_state_thrice(grid1, grid1_update_thrice):
     update_state(grid1)
     update_state(grid1)
-    assert update_state(grid1) == grid1_update_thrice
+    update_state(grid1)
+    assert grid1 == grid1_update_thrice
+
+
+def test_count_flashes_works(grid1):
+    assert count_flashes(grid1, 10) == 204
+
+
+def test_count_flashes_100_steps(grid1):
+    assert count_flashes(grid1, 100) == 1656
+
+
+def test_count_zero_flashes(grid2):
+    assert count_flashes(grid2, 1) == 0
+
+
+def test_count_flashes_after_zero_steps(grid2):
+    assert count_flashes(grid2, 0) == 0
