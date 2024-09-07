@@ -15,7 +15,7 @@ find the total number of flashes after 100 steps
 '''
 
 INPUT_FILE = "inputs/day_11_input.txt"
-TEST_FILE = "inputs/day_11_test_input.txt"
+TEST_FILE = "inputs/day_11_test_input_2.txt"
 
 
 def load_file(filename: str) -> list[list[int]]:
@@ -67,8 +67,6 @@ def increment_arr(increment: int, arr: list) -> list:
 def update_state(arr: list[list]) -> list[list]:
     '''Perform one update step.'''
     dim = len(arr)
-    print(arr)
-    all_idcs = get_all_idcs(dim)
 
     # increase all points by 1
     arr = increment_arr(1, arr)
@@ -83,25 +81,25 @@ def update_state(arr: list[list]) -> list[list]:
 
         already_considered.append(flashed_idx)
 
-        neighbourhood = get_adjacent(flashed_idx)
+        neighbourhood = get_adjacent(*flashed_idx, dim)
         for idx in neighbourhood:
 
             if idx != flashed_idx:
                 i, j = idx
                 arr[i][j] += 1
-                if arr[i][j] == 10:
-                    # it's just had a flash triggered
-                    flashed.append((i, j))
-            else:
-                arr[i][j] = 0
 
+            flashed = get_flashed(arr, to_exclude=already_considered)
+
+    for idx in already_considered:
+        i, j = idx
+        arr[i][j] = 0
     return arr
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
     lines = load_file(filename)
-
+    print(lines)
     return update_state(lines)
 
 
