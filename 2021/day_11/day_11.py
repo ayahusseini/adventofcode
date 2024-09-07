@@ -12,6 +12,9 @@ Over time,
 
 One star:
 find the total number of flashes after 100 steps 
+
+Two star:
+Find the step at which all positions flash
 '''
 
 INPUT_FILE = "inputs/day_11_input.txt"
@@ -106,17 +109,30 @@ def count_flashes(starting_grid: list[list], n_steps: int) -> int:
     return counter
 
 
+def find_synchronised_step(starting_grid: list[list]) -> int:
+    '''Return the step at which all positions flash'''
+    step = 0
+    while True:
+
+        num_flashed = update_state(starting_grid)
+        step += 1
+        if num_flashed == 100:
+            return step
+        if step > 10000:
+            break
+    raise TimeoutError("Too many steps")
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
     arr = load_file(filename)
-
     return count_flashes(arr, 100)
 
 
 def two_star(filename: str):
     '''Returns the two star solution'''
-
-    return
+    arr = load_file(filename)
+    return find_synchronised_step(arr)
 
 
 if __name__ == "__main__":
