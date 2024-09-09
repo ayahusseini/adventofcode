@@ -14,14 +14,12 @@ def get_encoded_message_in_hexadecimal(text: str):
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    instructions = load_file(filename)
 
     return
 
 
 def two_star(filename: str):
     '''Returns the one star solution'''
-    instructions = load_file(filename)
 
     return
 
