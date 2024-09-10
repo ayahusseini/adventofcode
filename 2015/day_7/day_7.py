@@ -26,7 +26,7 @@ def load_file(filename: str) -> list[int]:
     with open(filename, "r") as f:
         lines = f.readlines()
 
-    return [l.replace("\n", "").replace(" ", "") for l in lines]
+    return [l.replace("\n", "").strip() for l in lines]
 
 
 def get_and(signal1: int, signal2: int) -> int:
@@ -54,10 +54,45 @@ def get_or(signal1: int, signal2: int) -> int:
     return signal1 | signal2
 
 
+def get_input_values(line: str) -> dict:
+    '''Get a dictionary containing:
+    - list of sources being fed into the wires
+    - the target 
+    - The gate
+    from the instruction line'''
+
+    inputs, output = tuple(line.split(" -> "))
+
+    two_vals = ["AND", "OR", "LSHIFT", "RSHIFT"]
+    one_val = ["NOT"]
+
+    input_words = inputs.strip().split(" ")
+    sources = []
+    sources.append(input_words[0].strip())
+    command = 'SET'
+    for val in two_vals:
+        if val in input_words:
+            sources.append(input_words[-1].strip())
+            command = val
+
+    for val in one_val:
+        if val in input_words:
+            sources = [input_words[-1].strip()]
+            command = val
+
+    return {
+        "inputs": sources,
+        "target": output.strip(),
+        "gate": command
+    }
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
     lines = load_file(filename)
-
+    curr_values = {}
+    for line in lines:
+        commands = get_input_values(line)
     return
 
 
@@ -70,5 +105,5 @@ def two_star(filename: str):
 if __name__ == "__main__":
     print(f"One star solution is {one_star(TEST_FILE)}")
     print(f"Two star solution is {two_star(TEST_FILE)}")
-    print(f"One star solution is {one_star(INPUT_FILE)}")
-    print(f"Two star solution is {two_star(INPUT_FILE)}")
+    # print(f"One star solution is {one_star(INPUT_FILE)}")
+    # print(f"Two star solution is {two_star(INPUT_FILE)}")
