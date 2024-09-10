@@ -1,4 +1,4 @@
-'''Solution to advent of code day 10 2021
+'''Solution to advent of code day 7 2015
 '''
 
 INPUT_FILE = "inputs/day_10_input.txt"
