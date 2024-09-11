@@ -2,7 +2,11 @@
 456 -> y
 x AND y -> d
 x OR y -> e
+a -> j
 x LSHIFT 2 -> f
 y RSHIFT 2 -> g
+lh AND lm -> a
 NOT x -> h
 NOT y -> i
+NOT x -> lh 
+x AND y -> lm
