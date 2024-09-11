@@ -1,6 +1,31 @@
 import pytest
 
-from day_7 import get_numeric_inputs, get_gate_from_line, get_wires_from_line, process_line, add_wire_to_dictionary, execute_command, get_and, get_left_shift, get_complement, get_or
+from day_7 import get_numeric_inputs, get_gate_from_line, get_wires_from_line, process_line, add_wire_to_dictionary, execute_command, get_and, get_left_shift, get_complement, get_or, order_lines
+
+
+def test_order_two_lines():
+    lines = [
+        {"inputs": ["x"],
+         "target": "y",
+         "gate": "OR"},
+        {"inputs": ["123"],
+         "target": "x",
+         "gate": "SET"}]
+    assert order_lines(lines) == [lines[1], lines[0]]
+
+
+def test_order_three_lines():
+    lines = [
+        {"inputs": ["x", "y"],
+         "target": "z",
+         "gate": "AND"},
+        {"inputs": ["123"],
+         "target": "x",
+         "gate": "SET"},
+        {"inputs": ["x"],
+         "target": "y",
+         "gate": "SET"}]
+    assert order_lines(lines) == [lines[1], lines[2], lines[0]]
 
 
 def test_execute_command():

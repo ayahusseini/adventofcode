@@ -29,6 +29,11 @@ def load_file(filename: str, possible_gates: list[str] = GATES) -> list[int]:
     return [process_line(l.replace("\n", "").strip(), possible_gates) for l in lines]
 
 
+def order_lines(lines: list[dict]) -> list[dict]:
+    '''Sort the order of the lines, such that the circuit can be assembled by following the 
+    instructions one-by-one'''
+
+
 def get_gate_from_line(line: str,
                        possible_gates: list[str]) -> str:
     '''Extract the gate from a line. Return "SET" if no gate.'''
