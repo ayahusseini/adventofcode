@@ -29,9 +29,29 @@ def load_file(filename: str, possible_gates: list[str] = GATES) -> list[int]:
     return [process_line(l.replace("\n", "").strip(), possible_gates) for l in lines]
 
 
-def order_lines(lines: list[dict]) -> list[dict]:
-    '''Sort the order of the lines, such that the circuit can be assembled by following the 
-    instructions one-by-one'''
+def filter_lines(lines: list[dict], target: str = "a") -> list[dict]:
+    '''Filter the lines, such that only the components needed to find the target
+    are included"'''
+    to_define = []
+    defined = []
+
+    set_target = list(filter(lambda x: x["target"] == target, lines))
+    ordered_lines = [set_target]
+
+    for wire in set_target["inputs"]:
+        if wire.isalpha():
+            to_define.append(wire)
+
+    while to_define:
+        for i in to_define:
+            set_target = list(filter(lambda x: x["target"] == i, lines))
+            ordered_lines.append(set_target)
+            for wire in set_target["inputs"]:
+                if wire.isalpha():
+                    to_define.append(wire)
+            to_define.pop(0)
+
+    return ordered_lines[::-1]
 
 
 def get_gate_from_line(line: str,
