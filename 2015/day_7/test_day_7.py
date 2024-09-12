@@ -11,10 +11,10 @@ def test_filter_two_lines():
         {"inputs": ["123"],
          "target": "x",
          "gate": "SET"}]
-    assert set(filter_lines(lines, target="y")) == set(lines)
+    assert all(l in filter_lines(lines, target="y") for l in lines)
 
 
-def test_order_two_lines_filters_out():
+def test_filter_two_lines_filters_out():
     lines = [
         {"inputs": ["x"],
          "target": "y",
@@ -22,10 +22,21 @@ def test_order_two_lines_filters_out():
         {"inputs": ["123"],
          "target": "x",
          "gate": "SET"}]
-    assert order_lines(lines, target="x") == [lines[1]]
+    assert lines[1] in filter_lines(lines, target="x")
 
 
-def test_order_three_lines():
+def test_filter_two_lines_filters_out_2():
+    lines = [
+        {"inputs": ["x"],
+         "target": "y",
+         "gate": "OR"},
+        {"inputs": ["123"],
+         "target": "x",
+         "gate": "SET"}]
+    assert len(filter_lines(lines, target="x")) == 1
+
+
+def test_filter_three_lines():
     lines = [
         {"inputs": ["x", "y"],
          "target": "z",
@@ -36,7 +47,36 @@ def test_order_three_lines():
         {"inputs": ["x"],
          "target": "y",
          "gate": "SET"}]
-    assert order_lines(lines, target="z") == [lines[1], lines[2], lines[0]]
+    assert all(l in filter_lines(lines, target="z")
+               for l in [lines[1], lines[2], lines[0]])
+
+
+def test_filter_three_lines_2():
+    lines = [
+        {"inputs": ["x", "y"],
+         "target": "z",
+         "gate": "AND"},
+        {"inputs": ["123"],
+         "target": "x",
+         "gate": "SET"},
+        {"inputs": ["x"],
+         "target": "y",
+         "gate": "SET"}]
+    assert len(filter_lines(lines, target="z")) == 3
+
+
+def test_filter_three_lines_3():
+    lines = [
+        {"inputs": ["x", "y"],
+         "target": "z",
+         "gate": "AND"},
+        {"inputs": ["123"],
+         "target": "x",
+         "gate": "SET"},
+        {"inputs": ["x"],
+         "target": "y",
+         "gate": "SET"}]
+    assert len(filter_lines(lines, target="y")) == 2
 
 
 def test_execute_command():

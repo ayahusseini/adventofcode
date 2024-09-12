@@ -35,7 +35,7 @@ def filter_lines(lines: list[dict], target: str = "a") -> list[dict]:
     to_define = []
     defined = []
 
-    set_target = list(filter(lambda x: x["target"] == target, lines))
+    set_target = list(filter(lambda x: x["target"] == target, lines))[0]
     ordered_lines = [set_target]
 
     for wire in set_target["inputs"]:
@@ -43,13 +43,18 @@ def filter_lines(lines: list[dict], target: str = "a") -> list[dict]:
             to_define.append(wire)
 
     while to_define:
+
         for i in to_define:
-            set_target = list(filter(lambda x: x["target"] == i, lines))
+
+            set_target = list(filter(lambda x: x["target"] == i, lines))[0]
+
             ordered_lines.append(set_target)
+
             for wire in set_target["inputs"]:
-                if wire.isalpha():
+                if wire.isalpha() and wire not in defined:
                     to_define.append(wire)
             to_define.pop(0)
+            defined.append(i)
 
     return ordered_lines[::-1]
 
