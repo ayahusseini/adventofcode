@@ -1,82 +1,33 @@
 import pytest
 
-from day_7 import get_numeric_inputs, get_gate_from_line, get_wires_from_line, process_line, add_wire_to_dictionary, execute_command, get_and, get_left_shift, get_complement, get_or, filter_lines
+from day_7 import get_numeric_inputs, get_gate_from_line, get_wires_from_line, process_line, add_wire_to_dictionary, execute_command, get_and, get_left_shift, get_complement, get_or, sort_lines
 
 
-def test_filter_two_lines():
+def test_sort_lines():
+    lines = [{"inputs": ["x"], "target": "y", "gate": "OR"},
+             {"inputs": ["123"], "target": "x", "gate": "SET"}]
+    assert sort_lines(lines) == [lines[1], lines[0]]
+
+
+def test_sort_lines_multiple_lines():
     lines = [
-        {"inputs": ["x"],
-         "target": "y",
-         "gate": "OR"},
-        {"inputs": ["123"],
-         "target": "x",
-         "gate": "SET"}]
-    assert all(l in filter_lines(lines, target="y") for l in lines)
+        {'inputs': ['t'], 'target': 'u', 'gate': 'NOT'},
+        {'inputs': ['0'], 'target': 'c', 'gate': 'SET'},
+        {'inputs': ['c', '1'], 'target': 't', 'gate': 'LSHIFT'},
+    ]
+    assert sort_lines(lines) == [lines[1], lines[2], lines[0]]
 
 
-def test_filter_two_lines_filters_out():
+def test_sort_lines_multiple_sources():
     lines = [
-        {"inputs": ["x"],
-         "target": "y",
-         "gate": "OR"},
-        {"inputs": ["123"],
-         "target": "x",
-         "gate": "SET"}]
-    assert lines[1] in filter_lines(lines, target="x")
-
-
-def test_filter_two_lines_filters_out_2():
-    lines = [
-        {"inputs": ["x"],
-         "target": "y",
-         "gate": "OR"},
-        {"inputs": ["123"],
-         "target": "x",
-         "gate": "SET"}]
-    assert len(filter_lines(lines, target="x")) == 1
-
-
-def test_filter_three_lines():
-    lines = [
-        {"inputs": ["x", "y"],
-         "target": "z",
-         "gate": "AND"},
-        {"inputs": ["123"],
-         "target": "x",
-         "gate": "SET"},
-        {"inputs": ["x"],
-         "target": "y",
-         "gate": "SET"}]
-    assert all(l in filter_lines(lines, target="z")
-               for l in [lines[1], lines[2], lines[0]])
-
-
-def test_filter_three_lines_2():
-    lines = [
-        {"inputs": ["x", "y"],
-         "target": "z",
-         "gate": "AND"},
-        {"inputs": ["123"],
-         "target": "x",
-         "gate": "SET"},
-        {"inputs": ["x"],
-         "target": "y",
-         "gate": "SET"}]
-    assert len(filter_lines(lines, target="z")) == 3
-
-
-def test_filter_three_lines_3():
-    lines = [
-        {"inputs": ["x", "y"],
-         "target": "z",
-         "gate": "AND"},
-        {"inputs": ["123"],
-         "target": "x",
-         "gate": "SET"},
-        {"inputs": ["x"],
-         "target": "y",
-         "gate": "SET"}]
-    assert len(filter_lines(lines, target="y")) == 2
+        {'inputs': ['t'], 'target': 'u', 'gate': 'NOT'},
+        {'inputs': ['0'], 'target': 'c', 'gate': 'SET'},
+        {'inputs': ['c', '1'], 'target': 't', 'gate': 'LSHIFT'},
+        {"inputs": ["123"], "target": "x", "gate": "SET"},
+        {"inputs": ["x", "t"], "target": "l", "gate": "OR"}
+    ]
+    assert sort_lines(lines) == [lines[1], lines[3],
+                                 lines[2], lines[0], lines[4]]
 
 
 def test_execute_command():
@@ -133,8 +84,7 @@ def test_execute_command_gate_not_supplied_with_signals():
         "target": "d",
         "gate": "OR"
     }
-    assert execute_command(command, wire_vals, command_map) == {
-        "x": 1000, "y": 0, "d": 0}
+    assert execute_command(command, wire_vals, command_map) == None
 
 
 def test_add_wire():

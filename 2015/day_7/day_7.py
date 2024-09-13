@@ -29,34 +29,28 @@ def load_file(filename: str, possible_gates: list[str] = GATES) -> list[int]:
     return [process_line(l.replace("\n", "").strip(), possible_gates) for l in lines]
 
 
-def filter_lines(lines: list[dict], target: str = "a") -> list[dict]:
-    '''Filter the lines, such that only the components needed to find the target
-    are included"'''
-    to_define = []
-    defined = []
+def sort_lines(lines: list[dict]) -> list[dict]:
+    '''Sort the lines'''
+    sorted = []
+    unhandled_sources = [l for l in lines if l["inputs"]
+                         [0].isnumeric() and l["gate"] == "SET"]
+    while unhandled_sources:
+        source = unhandled_sources.pop(0)
 
-    set_target = list(filter(lambda x: x["target"] == target, lines))[0]
-    ordered_lines = [set_target]
+        sorted.append(source)
 
-    for wire in set_target["inputs"]:
-        if wire.isalpha():
-            to_define.append(wire)
+        next_nodes = [
+            l for l in lines if source["target"] in l["inputs"]]
 
-    while to_define:
+        for c in next_nodes:
+            defined_inputs = 0
+            for incoming in c["inputs"]:
+                if incoming.isnumeric() or incoming in set([s["target"] for s in sorted]):
+                    defined_inputs += 1
+            if defined_inputs == len(c["inputs"]):
+                unhandled_sources.append(c)
 
-        for i in to_define:
-
-            set_target = list(filter(lambda x: x["target"] == i, lines))[0]
-
-            ordered_lines.append(set_target)
-
-            for wire in set_target["inputs"]:
-                if wire.isalpha() and wire not in defined:
-                    to_define.append(wire)
-            to_define.pop(0)
-            defined.append(i)
-
-    return ordered_lines[::-1]
+    return sorted
 
 
 def get_gate_from_line(line: str,
@@ -166,31 +160,31 @@ def get_or(signal1: int, signal2: int) -> int:
     return signal1 | signal2
 
 
-def one_star(filename: str):
+def one_star(filename: str, target: str = "a"):
     '''Returns the one star solution'''
     lines = load_file(filename)
-    wire_signal_values = {"a": 0}
-    evaluated = [False]*len(lines)
+    print(list(filter(lambda x: "t" in x["inputs"], lines)))
+    for i, l in enumerate(lines):
+        if l['target'] == target:
+            print(i)
+    lines = sort_lines(lines)
+
+    print(lines)
+    wire_signal_values = dict()
+
     command_map = get_command_map()
 
-    lines = sorted(
-        lines, key=lambda x: x["gate"] == "SET" and x["inputs"][0].isnumeric())
-    while wire_signal_values["a"] == 0:
+    for i, command in enumerate(lines):
 
-        for i, command in enumerate(lines):
-            if evaluated[i]:
-                continue
-            for w in [*command["inputs"], command["target"]]:
-                if w.isalpha():
-                    add_wire_to_dictionary(w, wire_signal_values)
+        for w in [*command["inputs"], command["target"]]:
+            if w.isalpha():
+                add_wire_to_dictionary(w, wire_signal_values)
 
-            if execute_command(command, wire_signal_values, command_map):
-                wire_signal_values = execute_command(
-                    command, wire_signal_values, command_map)
-                evaluated[i] = True
-        print(sum(evaluated))
+        if execute_command(command, wire_signal_values, command_map):
+            wire_signal_values = execute_command(
+                command, wire_signal_values, command_map)
 
-    return wire_signal_values
+    return wire_signal_values[target]
 
 
 def two_star(filename: str):
@@ -200,7 +194,7 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-    # print(f"One star solution is {one_star(TEST_FILE)}")
-    print(f"Two star solution is {two_star(TEST_FILE)}")
-    print(f"One star solution is {one_star(INPUT_FILE)}")
-    print(f"Two star solution is {two_star(INPUT_FILE)}")
+    print(f"One star test solution is {one_star(TEST_FILE, target="x")}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
+    print(f"One star solution is {one_star(INPUT_FILE, target="a")}")
+    # print(f"Two star solution is {two_star(INPUT_FILE)}")
