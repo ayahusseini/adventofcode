@@ -102,8 +102,9 @@ def get_command_map() -> dict:
     }
 
 
-def get_signal_value(lines: list[dict], wire_name: str):
-    '''Get the value of the signal at a particular wire'''
+def get_signal_value(lines: list[dict], wire_name: str, override_wire: dict = {}):
+    '''Get the value of the signal at a particular wire.
+    You can override certain wire signals using the override_wire dictionary.'''
 
     gate_command_map = get_command_map()
     lines = sort_components(lines)
@@ -114,7 +115,9 @@ def get_signal_value(lines: list[dict], wire_name: str):
             i, int) else wire_values.get(i) for i in l['in']]
         gate = gate_command_map.get(l["gate"], False)
 
-        if gate:
+        if l['out'] in override_wire:
+            wire_values[l['out']] = override_wire[l['out']]
+        elif gate:
             wire_values[l['out']] = gate(*input_values)
         elif len(input_values) == 1:
             wire_values[l['out']] = input_values[0]
@@ -126,8 +129,16 @@ def get_signal_value(lines: list[dict], wire_name: str):
 def one_star(filename: str):
     lines = load_file(filename)
     nodes = [get_components_from_text(l) for l in lines]
-    print(get_signal_value(nodes, 'a'))
+    return get_signal_value(nodes, 'a')
+
+
+def two_star(filename: str):
+    lines = load_file(filename)
+    nodes = [get_components_from_text(l) for l in lines]
+    value_of_b = get_signal_value(nodes, 'a')
+    return get_signal_value(nodes, 'a', override_wire={'b': value_of_b})
 
 
 if __name__ == "__main__":
-    one_star(INPUT_FILE)
+    print(f"One star solution: {one_star(INPUT_FILE)}")
+    print(f"Two star solution: {two_star(INPUT_FILE)}")
