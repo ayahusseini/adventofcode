@@ -110,17 +110,14 @@ def get_signal_value(lines: list[dict], wire_name: str):
     wire_values = dict()
 
     for l in lines:
-        print(l)
         input_values = [i if isinstance(
             i, int) else wire_values.get(i) for i in l['in']]
-        print(f"input {input_values}")
         gate = gate_command_map.get(l["gate"], False)
 
         if gate:
             wire_values[l['out']] = gate(*input_values)
         elif len(input_values) == 1:
             wire_values[l['out']] = input_values[0]
-        print(f"wire values: {wire_values}")
 
         if wire_name in wire_values:
             return wire_values.get(wire_name)
