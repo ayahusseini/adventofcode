@@ -18,7 +18,7 @@ def get_components_from_text(component_text: str):
     of the component in the form inputs -> outputs'''
 
     gate_class = "NOGATE"
-    for i in ["ADD", "OR", "NOT", "LSHIFT", "RSHIFT"]:
+    for i in ["AND", "OR", "NOT", "LSHIFT", "RSHIFT"]:
         if i in component_text:
             gate_class = i
             break
@@ -104,14 +104,26 @@ def get_command_map() -> dict:
 
 def get_signal_value(lines: list[dict], wire_name: str):
     '''Get the value of the signal at a particular wire'''
+
     gate_command_map = get_command_map()
     lines = sort_components(lines)
     wire_values = dict()
+
     for l in lines:
+        print(l)
         input_values = [i if isinstance(
             i, int) else wire_values.get(i) for i in l['in']]
-        print(l)
-        print(input_values)
+        print(f"input {input_values}")
+        gate = gate_command_map.get(l["gate"], False)
+
+        if gate:
+            wire_values[l['out']] = gate(*input_values)
+        elif len(input_values) == 1:
+            wire_values[l['out']] = input_values[0]
+        print(f"wire values: {wire_values}")
+
+        if wire_name in wire_values:
+            return wire_values.get(wire_name)
 
 
 def one_star(filename: str):
@@ -121,4 +133,4 @@ def one_star(filename: str):
 
 
 if __name__ == "__main__":
-    one_star(TEST_FILE)
+    one_star(INPUT_FILE)
