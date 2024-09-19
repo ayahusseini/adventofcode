@@ -1,8 +1,8 @@
 '''Solution to advent of code day 10 2021
 '''
-
-INPUT_FILE = "inputs/day_10_input.txt"
-TEST_FILE = "inputs/day_10_test_input.txt"
+import re
+INPUT_FILE = "inputs/day_8_input.txt"
+TEST_FILE = "inputs/day_8_test_input.txt"
 
 
 def load_file(filename: str) -> list[int]:
@@ -14,10 +14,24 @@ def load_file(filename: str) -> list[int]:
     return [l.replace("\n", "").replace(" ", "") for l in lines]
 
 
+def get_num_characters_of_code(line: str):
+    return len(line)
+
+
+def get_num_characters_of_string(line: str):
+    # remove quotation marks
+    line = line[1:-1]
+    # reformat
+    line = line.encode().decode("unicode-escape")
+    print(line)
+
+    return len(line)
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
     lines = load_file(filename)
-
+    print(lines)
     return
 
 
@@ -30,5 +44,5 @@ def two_star(filename: str):
 if __name__ == "__main__":
     print(f"One star solution is {one_star(TEST_FILE)}")
     print(f"Two star solution is {two_star(TEST_FILE)}")
-    print(f"One star solution is {one_star(INPUT_FILE)}")
+    # print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")
