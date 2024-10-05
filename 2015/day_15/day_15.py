@@ -1,7 +1,5 @@
 '''Solution to advent of code day 14 2015
 '''
-
-import numpy as np
 INPUT_FILE = "inputs/day_15_input.txt"
 TEST_FILE = "inputs/day_15_test_input.txt"
 
@@ -20,24 +18,56 @@ class Item(object):
 
 
 class ItemsList(object):
-    def __init__(self, items_list: list[Item], constraint=lambda i, p: True):
+    def __init__(self, items_list: list[Item], calories: int = -1):
         '''Instantiate a list of items'''
         self.items_list = items_list
-        self.initial_proportions = [100//len(items_list) for _ in items_list]
+        self.calories = calories
 
-        r = 100 % len(items_list)
+    def get_initial_proportions(self):
+        '''Get the first valid set of initial proportions'''
+        print("getting initial proportions")
+        num_items = len(self.items_list)
+        initial = [100//num_items
+                   for _ in range(num_items)]
+
+        r = 100 % len(self.items_list)
         i = 0
 
         while r > 0:
-            self.initial_proportions[i] += 1
+            initial[i] += 1
             r -= 1
             i += 1
 
-        while not constraint(self, self.initial_proportions):
-            self.initial_proportions[0] -= 1
-            self.initial_proportions[-1] += 1
+        queue = [initial]
+        considered = []
 
-        self.constraint = lambda p: constraint(self, p)
+        while self.calories >= 0:
+            curr_initial = queue.pop(0)
+
+            curr_calories = self.get_score(
+                curr_initial, properties=["calories"])
+            print(f"curr calories is {curr_calories}")
+            if self.calories == curr_calories:
+                print(f"curr calories is {curr_calories}")
+                print(f"This is equal to the target {self.calories}")
+                return curr_initial
+
+            elif self.calories > curr_calories:
+                print(f"curr calories is {curr_calories}")
+                print(f"This is less than the target {self.calories}")
+                reverse_dir = False
+            elif self.calories < curr_calories:
+                print(f"curr calories is {curr_calories}")
+                print(f"This is more than the target {self.calories}")
+                reverse_dir = True
+
+            new = [i for i in self.get_increasing_directions(
+                curr_initial, curr_calories, properties=["calories"], reverse=reverse_dir) if i not in considered]
+            queue += [new[0]]
+
+            considered.append(curr_initial)
+
+        return initial
 
     def __len__(self):
         return len(self.items_list)
@@ -55,10 +85,10 @@ class ItemsList(object):
             score *= self.get_total_value_for_property(p, proportions)
         return score
 
-    def get_increasing_directions(self, curr_proportions: list[int], curr_score: int, constraint=lambda p: True):
+    def get_increasing_directions(self, curr_proportions: list[int], curr_score: int, properties: list[str] = ["capacity", "durability", "flavour", "texture"], reverse: bool = False):
         '''Make a single unit change to curr_proportions that will lead to an increase.
-        Return the new proportions and their scores, 
-        as long as those proportions satisfy the constraint.'''
+        Return the new proportions and their scores.'''
+
         increasing_directions = []
 
         for i, p_decrease in enumerate(curr_proportions):
@@ -74,31 +104,38 @@ class ItemsList(object):
                 new_proportion = curr_proportions.copy()
                 new_proportion[i] -= 1
                 new_proportion[j] += 1
-                if not constraint(new_proportion):
-                    continue
-                if self.get_score(new_proportion) >= curr_score:
+
+                if not reverse and self.get_score(new_proportion, properties=properties) >= curr_score:
+                    increasing_directions.append(new_proportion)
+                elif reverse and self.get_score(new_proportion, properties=properties) <= curr_score:
                     increasing_directions.append(new_proportion)
         return increasing_directions
 
     def find_max_score(self, properties: list[str] = ["capacity", "durability", "flavour", "texture"]):
-        '''Return the maximum possible score with respect to certain properties.
-        The function constraint maps valid proportions to True.'''
+        '''Return the maximum possible score with respect to certain properties.'''
 
-        queue = [self.initial_proportions]
-        print(queue)
-
+        queue = [self.get_initial_proportions()]
+        print(queue, self.get_score(queue[0], properties=["calories"]))
         considered = []
         curr_max = 0
 
         while queue:
 
             considering = queue.pop(0)
+
             if tuple(considering) in considered:
                 continue
             considered.append(tuple(considering))
-            curr_max = max(curr_max, self.get_score(considering, properties))
+
+            if self.calories >= 0 and self.get_score(considering, ["calories"]) == self.calories:
+                curr_max = max(curr_max, self.get_score(
+                    considering, properties))
+            elif self.calories < 0:
+                curr_max = max(curr_max, self.get_score(
+                    considering, properties))
+
             queue += self.get_increasing_directions(
-                curr_proportions=considering, curr_score=curr_max, constraint=self.constraint)
+                curr_proportions=considering, curr_score=curr_max)
         return curr_max
 
 
@@ -111,19 +148,16 @@ def load_file(filename: str) -> list[int]:
     return [l.replace("\n", "") for l in lines]
 
 
-def get_items(lines: list[str], max_calories=None) -> dict:
+def get_items(lines: list[str], calories_constraint: int = -1) -> dict:
     '''Returns a dict of ingredients'''
     items = []
+
     for l in lines:
         w = l.replace(",", "").replace(":", "").split(" ")
         items.append(Item(w[0], int(w[2]), int(w[4]),
                      int(w[6]), int(w[8]), int(w[10])))
 
-    if max_calories is not None:
-        def constraint(items_obj, prop): return items_obj.get_total_value_for_property(
-            "calories", prop) == 500
-        return ItemsList(items, constraint)
-    return ItemsList(items)
+    return ItemsList(items, calories=calories_constraint)
 
 
 def one_star(filename: str):
@@ -137,14 +171,14 @@ def one_star(filename: str):
 def two_star(filename: str):
     '''Returns the two star solution'''
     lines = load_file(filename)
-    items = get_items(lines, max_calories=500)
-    print(items.initial_proportions)
+    items = get_items(lines, calories_constraint=500)
+
     return items.find_max_score()
 
 
 if __name__ == "__main__":
-    print(f"One star test solution is {one_star(TEST_FILE)}")
+    # print(f"One star test solution is {one_star(TEST_FILE)}")
 
     print(f"Two star test solution is {two_star(TEST_FILE)}")
-    print(f"One star solution is {one_star(INPUT_FILE)}")
+    # print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")
