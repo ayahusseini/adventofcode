@@ -1,5 +1,5 @@
 import pytest 
-from day_15_2 import shuffle_proportions, step_up_params, step_up_params_with_constraint
+from day_15 import shuffle_proportions, step_up_params, step_up_params_with_constraint
 
 @pytest.fixture 
 def example_proportions():
