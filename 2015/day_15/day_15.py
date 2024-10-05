@@ -1,5 +1,7 @@
-'''Solution to advent of code day 14 2015
+'''Solution to advent of code day 15 2015
 '''
+from collections import defaultdict
+
 INPUT_FILE = "inputs/day_15_input.txt"
 TEST_FILE = "inputs/day_15_test_input.txt"
 
@@ -18,19 +20,15 @@ class Item(object):
 
 
 class ItemsList(object):
-    def __init__(self, items_list: list[Item], calories: int = -1):
-        '''Instantiate a list of items'''
-        self.items_list = items_list
-        self.calories = calories
-
-    def get_initial_proportions(self):
-        '''Get the first valid set of initial proportions'''
-        print("getting initial proportions")
-        num_items = len(self.items_list)
-        initial = [100//num_items
-                   for _ in range(num_items)]
-
-        r = 100 % len(self.items_list)
+    def __init__(self, items_list: list[Item], is_constrained: bool):
+        '''Instantiate a list of items.'''
+        self.items = items_list
+        num_items = len(items_list)
+        self.constrained = is_constrained
+        
+        constraint = self.constraint
+        initial = [100//num_items for _ in range(num_items)]
+        r = 100 % num_items
         i = 0
 
         while r > 0:
@@ -38,106 +36,96 @@ class ItemsList(object):
             r -= 1
             i += 1
 
-        queue = [initial]
-        considered = []
+        self.initial = initial 
 
-        while self.calories >= 0:
-            curr_initial = queue.pop(0)
-
-            curr_calories = self.get_score(
-                curr_initial, properties=["calories"])
-            print(f"curr calories is {curr_calories}")
-            if self.calories == curr_calories:
-                print(f"curr calories is {curr_calories}")
-                print(f"This is equal to the target {self.calories}")
-                return curr_initial
-
-            elif self.calories > curr_calories:
-                print(f"curr calories is {curr_calories}")
-                print(f"This is less than the target {self.calories}")
-                reverse_dir = False
-            elif self.calories < curr_calories:
-                print(f"curr calories is {curr_calories}")
-                print(f"This is more than the target {self.calories}")
-                reverse_dir = True
-
-            new = [i for i in self.get_increasing_directions(
-                curr_initial, curr_calories, properties=["calories"], reverse=reverse_dir) if i not in considered]
-            queue += [new[0]]
-
-            considered.append(curr_initial)
-
-        return initial
-
-    def __len__(self):
-        return len(self.items_list)
-
-    def get_total_value_for_property(self, property: str, proportions: list[int]):
-        '''Returns the total value for a given property'''
-        total = sum([i.stats[property]*proportions[idx]
-                    for idx, i in enumerate(self.items_list)])
+    def get_score(self, property: str, amounts: list[int]):
+        '''Returns the score for a given property'''
+        total = sum([i.stats[property]*amounts[idx]
+                     for idx, i in enumerate(self.items)])
         return total if total > 0 else 0
 
-    def get_score(self, proportions: list[int], properties: list[str] = ["capacity", "durability", "flavour", "texture"]):
-        '''Returns the total score given items in certain proportions'''
-        score = 1
-        for p in properties:
-            score *= self.get_total_value_for_property(p, proportions)
-        return score
+    def constraint(self, proportions: list[int]) -> bool:
+        '''Return True/False if the proportions and items satisfy
+        a constraint.'''
+        if self.constrained:
+            return self.get_score("calories", proportions) == 500
+        return True
 
-    def get_increasing_directions(self, curr_proportions: list[int], curr_score: int, properties: list[str] = ["capacity", "durability", "flavour", "texture"], reverse: bool = False):
-        '''Make a single unit change to curr_proportions that will lead to an increase.
-        Return the new proportions and their scores.'''
+    def get_total_score(self, amounts: list[int]):
+        '''Returns the total score'''
+        tot = 1
+        for p in ["capacity", "durability", "flavour", "texture"]:
+            tot *= self.get_score(p, amounts)
+            if tot == 0:
+                return 0
+        return tot
+    
+    def get_max_score(self):
+        '''Returns the maximum possible score'''
+        curr = self.initial 
+        queue = []
+        considered = set()
+        
+        score = self.get_total_score(curr) if self.constraint(curr) else 0
+        
+        while True:
+            next_step = step_up_params_with_constraint(curr,self.get_total_score,score, self.constraint)
+            if not next_step:
+                return score
+            queue += [p for p in next_step if tuple(p) not in considered]
+            queue.sort(key = self.get_total_score, reverse= True)
 
-        increasing_directions = []
+            curr = queue.pop(0)
+            
+            considered.add(tuple(curr))
+            
+            score = max(self.get_total_score(curr),score)
 
-        for i, p_decrease in enumerate(curr_proportions):
-            if p_decrease == 0:
-                continue
-            for j, p_increase in enumerate(curr_proportions):
-                if i == j:
-                    continue
+    
 
-                if p_increase == 100:
-                    continue
+def shuffle_proportions(units: int, from_idx: int, proportions: list[int]):
+    '''Given a list of proportions, transfer units from from_idx to all others. Return a list of the new proportions'''
 
-                new_proportion = curr_proportions.copy()
-                new_proportion[i] -= 1
-                new_proportion[j] += 1
+    if proportions[from_idx] - units < 0:
+        return []
+    new = proportions.copy()
+    new[from_idx] -= units
 
-                if not reverse and self.get_score(new_proportion, properties=properties) >= curr_score:
-                    increasing_directions.append(new_proportion)
-                elif reverse and self.get_score(new_proportion, properties=properties) <= curr_score:
-                    increasing_directions.append(new_proportion)
-        return increasing_directions
+    return [new[:i] + [new[i]+units] + new[i+1:] for i in range(len(proportions)) if new[i]+units <= 100 and i != from_idx]
 
-    def find_max_score(self, properties: list[str] = ["capacity", "durability", "flavour", "texture"]):
-        '''Return the maximum possible score with respect to certain properties.'''
+def shuffle_all(nunits: int, props: list[int]):
+    '''Given a list of proportions, transfer nunits from one index to another. 
+    Repeat for all pairs of indeces.'''
 
-        queue = [self.get_initial_proportions()]
-        print(queue, self.get_score(queue[0], properties=["calories"]))
-        considered = []
-        curr_max = 0
+    res = []
+    for i in range(len(props)):
+        res += shuffle_proportions(nunits,i,props)
+    return res
 
-        while queue:
+def step_up_params(params:list[int], scorer, curr_score: int, step:int = 1):
+    '''Given a scorer, find the next valid set of parameters, such that the score 
+    increases'''
 
-            considering = queue.pop(0)
+    new = []
+    shuffled = shuffle_all(step, params)
+    for p in shuffled:
+        if scorer(p) >= curr_score:
+            new.append(p)
+    return new 
 
-            if tuple(considering) in considered:
-                continue
-            considered.append(tuple(considering))
-
-            if self.calories >= 0 and self.get_score(considering, ["calories"]) == self.calories:
-                curr_max = max(curr_max, self.get_score(
-                    considering, properties))
-            elif self.calories < 0:
-                curr_max = max(curr_max, self.get_score(
-                    considering, properties))
-
-            queue += self.get_increasing_directions(
-                curr_proportions=considering, curr_score=curr_max)
-        return curr_max
-
+def step_up_params_with_constraint(params:list[int], scorer, curr_score: int,constraint):
+    '''Given a scorer, find the next valid set of parameters, such that the score 
+    increases. 
+    The step increases if the constraint prevents new parameters from being found.'''
+    step = 1
+    while step <= 100//len(params):
+        found = step_up_params(params,scorer,curr_score,step)
+        if not found:
+            return []
+        found = list(filter(constraint,found))
+        if found:
+            return found 
+        step += 1 
 
 def load_file(filename: str) -> list[int]:
     '''Loads the file as a list of integers'''
@@ -147,8 +135,7 @@ def load_file(filename: str) -> list[int]:
 
     return [l.replace("\n", "") for l in lines]
 
-
-def get_items(lines: list[str], calories_constraint: int = -1) -> dict:
+def get_items(lines: list[str], constraint: bool) -> ItemsList:
     '''Returns a dict of ingredients'''
     items = []
 
@@ -157,28 +144,28 @@ def get_items(lines: list[str], calories_constraint: int = -1) -> dict:
         items.append(Item(w[0], int(w[2]), int(w[4]),
                      int(w[6]), int(w[8]), int(w[10])))
 
-    return ItemsList(items, calories=calories_constraint)
+    return ItemsList(items, is_constrained= constraint)
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
     lines = load_file(filename)
-    items = get_items(lines)
+    items = get_items(lines, constraint= False)
 
-    return items.find_max_score()
+    return items.get_max_score()
 
 
 def two_star(filename: str):
     '''Returns the two star solution'''
     lines = load_file(filename)
-    items = get_items(lines, calories_constraint=500)
+    items = get_items(lines, constraint= True)
 
-    return items.find_max_score()
+    return items.get_max_score()
+
 
 
 if __name__ == "__main__":
-    # print(f"One star test solution is {one_star(TEST_FILE)}")
-
+    print(f"One star test solution is {one_star(TEST_FILE)}")
     print(f"Two star test solution is {two_star(TEST_FILE)}")
-    # print(f"One star solution is {one_star(INPUT_FILE)}")
+    print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")
