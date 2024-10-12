@@ -10,7 +10,9 @@ dist == r_dist (record distance) at the solutions to the quadratic
 
 since this is a negative quadratic, dist >= r_dist between the solutions 
 '''
+
 from math import floor, ceil
+
 INPUT_FILE = "inputs/day_6_input.txt"
 TEST_FILE = "inputs/day_6_test_input.txt"
 

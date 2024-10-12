@@ -8,8 +8,8 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |2015| 30 ⭐ |
 |2021|22 ⭐    |
 |2022| 4 ⭐    |
-|2023| 10 ⭐    |
-|**Total**|**66** ⭐ |
+|2023| 12 ⭐    |
+|**Total**|**68** ⭐ |
 
 ## Setup 
 
