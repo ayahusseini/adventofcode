@@ -32,7 +32,7 @@ class Grid:
 
     def __str__(self):
         string_grid = self.grid.copy()
-        string_grid = np.where(string_grid == 0, '.', '*')
+        string_grid = np.where(string_grid == 0, '.', '#')
 
         return '\n'.join(''.join(row) for row in string_grid.astype(str))
 
@@ -90,12 +90,16 @@ def one_star(filename: str):
 
 def two_star(filename: str):
     '''Returns the two star solution'''
+    coords, folds = load_file(filename)
+    grid = Grid.from_lines(coords)
+    for fold in folds:
+        implement_instruction(grid, fold)
 
-    return
+    return str(grid)
 
 
 if __name__ == "__main__":
     print(f"One star solution is {one_star(TEST_FILE)}")
-    print(f"Two star solution is {two_star(TEST_FILE)}")
+    print(f"Two star solution is\n{two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
-    print(f"Two star solution is {two_star(INPUT_FILE)}")
+    print(f"Two star solution is\n{two_star(INPUT_FILE)}")
