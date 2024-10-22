@@ -94,7 +94,7 @@ class Map:
                 elif neighbour == self.end:
                     new_path = deepcopy(cur_path)
                     new_path.add_cave_to_path(self.end)
-                    paths.append(new_path)
+                    paths.append(cur_path)
                 
                 else:
                     try:
