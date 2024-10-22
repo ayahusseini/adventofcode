@@ -6,10 +6,10 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |Year| Stars ⭐|
 |----|--------|
 |2015| 30 ⭐ |
-|2021|24 ⭐    |
+|2021|26 ⭐    |
 |2022| 4 ⭐    |
 |2023| 12 ⭐    |
-|**Total**|**70** ⭐ |
+|**Total**|**72** ⭐ |
 
 ## Setup 
 
