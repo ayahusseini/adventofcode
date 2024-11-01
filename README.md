@@ -9,7 +9,7 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |2021|28     |
 |2022| 4     |
 |2023| 12    |
-|**Total**|**72** ⭐ |
+|**Total**|**74** ⭐ |
 
 ## Setup 
 
