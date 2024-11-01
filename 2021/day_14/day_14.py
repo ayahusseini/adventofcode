@@ -1,5 +1,5 @@
 """Solution to day 14 2021"""
-from collections import Counter
+from collections import Counter, defaultdict
 INPUT_FILE = "inputs/day_14_input.txt"
 TEST_FILE = "inputs/day_14_test_input.txt"
 
@@ -43,17 +43,36 @@ def polymerise_n_times(n: int, pair_counter: Counter, rules: dict) -> Counter:
     return pair_counter
 
 
+def get_polymer_counter(initial_template: str, pair_counts: Counter) -> Counter:
+    """Counts the polymers given a pair counter"""
+    polymer_counter = defaultdict(int)
+    polymer_counter[initial_template[-1]] = 1
+    for pair, count in pair_counts.items():
+        polymer_counter[pair[0]] += count
+    return Counter(polymer_counter)
+
+
+def get_max_min_occurances(template: str, rule: dict, num_steps: int) -> int:
+    """Returns the difference between the max and min occurances of a polymer"""
+    pairs = get_pair_counter(template)
+    final_pair_counter = polymerise_n_times(num_steps, pairs, rule)
+    polymer_counter = get_polymer_counter(
+        template, final_pair_counter).most_common()
+    return polymer_counter[0][1] - polymer_counter[-1][1]
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
     curr_template, rule_dict = load_file(filename)
 
-    return
+    return get_max_min_occurances(curr_template, rule_dict, 10)
 
 
 def two_star(filename: str):
     '''Returns the two star solution'''
+    curr_template, rule_dict = load_file(filename)
 
-    return
+    return get_max_min_occurances(curr_template, rule_dict, 40)
 
 
 if __name__ == "__main__":
