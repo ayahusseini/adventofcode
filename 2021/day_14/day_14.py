@@ -25,9 +25,21 @@ def get_pair_counter(template: str) -> Counter:
     return Counter([template[i:i+2] for i in range(len(template)-1)])
 
 
-def implement_step(pair_counts: Counter, rules: dict):
+def implement_step(pair_counts: Counter, rules: dict) -> Counter:
     """Implements a single step of pair insertion. 
     Returns the new pair counts dictionary"""
+    for pair, count in pair_counts:
+        to_insert = rules[pair]
+        for new_pair in (pair[0] + to_insert, to_insert + pair[1]):
+            pair_counts[new_pair] += count
+    return pair_counts
+
+
+def polymerise_n_times(n: int, pair_counter: Counter, rules: dict) -> Counter:
+    """Performs n steps of polymerisation"""
+    for _ in range(n):
+        pair_counter = implement_step(pair_counter, rules)
+    return pair_counter
 
 
 def one_star(filename: str):
