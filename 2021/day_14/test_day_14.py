@@ -1,5 +1,5 @@
 import pytest
-from day_14 import load_file, TEST_FILE, get_pair_counter
+from day_14 import load_file, TEST_FILE, get_pair_counter, implement_step
 
 
 @pytest.fixture
@@ -20,3 +20,9 @@ def test_load_file():
 
 def test_get_pairs(template):
     assert get_pair_counter(template) == {"NN": 1, "NC": 1, "CB": 1}
+
+
+def test_step(template, rules):
+    counter = get_pair_counter(template)
+    final_counter = get_pair_counter("NCNBCHB")
+    assert implement_step(counter, rules) == final_counter

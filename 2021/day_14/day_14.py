@@ -28,11 +28,12 @@ def get_pair_counter(template: str) -> Counter:
 def implement_step(pair_counts: Counter, rules: dict) -> Counter:
     """Implements a single step of pair insertion. 
     Returns the new pair counts dictionary"""
-    for pair, count in pair_counts:
+    new_pair_counts = Counter()
+    for pair, count in pair_counts.items():
         to_insert = rules[pair]
         for new_pair in (pair[0] + to_insert, to_insert + pair[1]):
-            pair_counts[new_pair] += count
-    return pair_counts
+            new_pair_counts[new_pair] += count
+    return new_pair_counts
 
 
 def polymerise_n_times(n: int, pair_counter: Counter, rules: dict) -> Counter:
