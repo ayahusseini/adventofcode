@@ -1,5 +1,5 @@
 """Solution to day 14 2021"""
-
+from collections import Counter
 INPUT_FILE = "inputs/day_14_input.txt"
 TEST_FILE = "inputs/day_14_test_input.txt"
 
@@ -38,9 +38,13 @@ def generate_next_item(template: str, rules: dict):
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    lines = load_file(filename)
+    curr_template, rule_dict = load_file(filename)
+    for _ in range(10):
+        curr_template = ''.join(generate_next_item(curr_template, rule_dict))
 
-    return
+    most_common = Counter(curr_template).most_common()
+
+    return most_common[0][1] - most_common[-1][1]
 
 
 def two_star(filename: str):
