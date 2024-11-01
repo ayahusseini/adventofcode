@@ -11,9 +11,18 @@ def load_file(filename: str) -> tuple:
         lines = f.readlines()
 
     template = lines.pop(0).replace("\n", "")
-    rules = [l.replace("\n", "").split(' -> ') for l in lines[1:]]
+    rules = {}
+
+    for l in lines[1:]:
+        pair, insertion = l.replace("\n", "").split(' -> ')
+        rules[pair] = insertion
 
     return template, rules
+
+
+def get_pairs(template: str) -> list[str]:
+    """Splits the template into a list of overlapping pairs"""
+    return [template[i:i+2] for i in range(len(template)-1)]
 
 
 def one_star(filename: str):
