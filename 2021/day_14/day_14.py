@@ -25,6 +25,17 @@ def get_pairs(template: str) -> list[str]:
     return [template[i:i+2] for i in range(len(template)-1)]
 
 
+def generate_next_item(template: str, rules: dict):
+    """Performs pair insertion according to the rules"""
+    pairs = get_pairs(template)
+
+    yield template[0]
+
+    for pair in pairs:
+        yield rules[pair]
+        yield pair[1]
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
     lines = load_file(filename)
