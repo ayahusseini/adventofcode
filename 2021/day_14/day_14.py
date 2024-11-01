@@ -20,31 +20,21 @@ def load_file(filename: str) -> tuple:
     return template, rules
 
 
-def get_pairs(template: str) -> list[str]:
+def get_pair_counter(template: str) -> Counter:
     """Splits the template into a list of overlapping pairs"""
-    return [template[i:i+2] for i in range(len(template)-1)]
+    return Counter([template[i:i+2] for i in range(len(template)-1)])
 
 
-def generate_next_item(template: str, rules: dict):
-    """Performs pair insertion according to the rules"""
-    pairs = get_pairs(template)
-
-    yield template[0]
-
-    for pair in pairs:
-        yield rules[pair]
-        yield pair[1]
+def implement_step(pair_counts: Counter, rules: dict):
+    """Implements a single step of pair insertion. 
+    Returns the new pair counts dictionary"""
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
     curr_template, rule_dict = load_file(filename)
-    for _ in range(10):
-        curr_template = ''.join(generate_next_item(curr_template, rule_dict))
 
-    most_common = Counter(curr_template).most_common()
-
-    return most_common[0][1] - most_common[-1][1]
+    return
 
 
 def two_star(filename: str):
@@ -54,7 +44,7 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-    print(f"One star solution is {one_star(TEST_FILE)}")
-    print(f"Two star solution is {two_star(TEST_FILE)}")
+    print(f"One star test solution is {one_star(TEST_FILE)}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")

@@ -1,5 +1,5 @@
 import pytest
-from day_14 import load_file, TEST_FILE, get_pairs, generate_next_item
+from day_14 import load_file, TEST_FILE, get_pair_counter
 
 
 @pytest.fixture
@@ -19,8 +19,4 @@ def test_load_file():
 
 
 def test_get_pairs(template):
-    assert get_pairs(template) == ["NN", "NC", "CB"]
-
-
-def test_generate_next_item(template, rules):
-    assert ''.join(generate_next_item(template, rules)) == "NCNBCHB"
+    assert get_pair_counter(template) == {"NN": 1, "NC": 1, "CB": 1}
