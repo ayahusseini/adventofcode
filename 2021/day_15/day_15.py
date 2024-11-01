@@ -28,7 +28,7 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-    print(f"One star solution is {one_star(TEST_FILE)}")
-    print(f"Two star solution is {two_star(TEST_FILE)}")
+    print(f"One star test solution is {one_star(TEST_FILE)}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")
