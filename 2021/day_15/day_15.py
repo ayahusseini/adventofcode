@@ -8,6 +8,7 @@ TEST_FILE = "inputs/day_15_test_input.txt"
 
 
 class Grid:
+
     def __init__(self, array: np.ndarray, allow_diag: bool = False):
         """Instangiate a map of caves"""
         self.array = array
@@ -19,20 +20,22 @@ class Grid:
 
     def min_path_length(self, start: tuple, end: tuple):
         """Returns the minimum path length"""
+
         dist = np.full_like(self.array, fill_value=np.inf)
         visited = np.full_like(self.array, fill_value=False, dtype=bool)
+
         dist[*start] = 0
 
         while not visited[*end]:
-            node = np.where(dist == dist[~visited].min())[0]
-            node_value = dist[node]
-
-            print(f"Visiting index {node}")
+            temp_distances = dist.copy().astype(float)
+            temp_distances[visited] = np.inf
+            node = np.unravel_index(
+                temp_distances.argmin(), shape=temp_distances.shape)
+            node_value = temp_distances[node]
 
             visited[*node] = True
             for dir in self.directions:
                 r, c = node[0] + dir[0], node[1] + dir[1]
-                print("checking neighbour", r, c)
                 if r < 0 or c < 0 or r >= self.nrows or c >= self.ncols:
                     continue
                 possible_update = self.array[r, c] + node_value
@@ -66,7 +69,7 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-    print(f"One star test solution is \n{one_star(TEST_FILE)}")
+    print(f"One star test solution is {one_star(TEST_FILE)}")
     print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     # print(f"Two star solution is {two_star(INPUT_FILE)}")
