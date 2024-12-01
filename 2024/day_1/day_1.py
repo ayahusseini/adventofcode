@@ -5,13 +5,17 @@ INPUT_FILE = "inputs/day_1_input.txt"
 TEST_FILE = "inputs/day_1_test_input.txt"
 
 
-def load_file(filename: str) -> list[str]:
-    '''Loads the file as a list of strings'''
-
+def load_file(filename: str) -> list[int]:
+    '''Loads the file as two lists of integers'''
+    l1 = []
+    l2 = []
     with open(filename, "r") as f:
         lines = f.readlines()
-
-    return [l.replace("\n", "").replace(" ", "") for l in lines]
+        for line in lines:
+            ints = line.split("   ")
+            l1.append(int(ints[0]))
+            l2.append(int(ints[0]))
+    return l1, l2 
 
 
 def one_star(filename: str):
