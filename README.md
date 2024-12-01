@@ -1,4 +1,5 @@
 # README
+
 The main folders contain solutions to https://adventofcode.com/ problems ordered by year. Inputs and test inputs can be found within the `inputs/` folder of each year. Test files are named `test_day_{x}.py`. Solution files are named `day_{x}.py`. A general template can be found in `template/`
 
 ## Current progress
@@ -6,7 +7,7 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |Year| Stars ⭐|
 |----|--------|
 |2015| 30  |
-|2021|28     |
+|2021|29     |
 |2022| 4     |
 |2023| 12    |
 |**Total**|**74** ⭐ |
