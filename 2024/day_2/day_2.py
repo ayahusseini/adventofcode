@@ -51,7 +51,7 @@ class Report:
 
 
 def load_file(filename: str) -> list[Report]:
-    '''Loads the file as two lists of integers'''
+    '''Loads the file as a list of reports'''
     reports = []
     with open(filename, "r") as f:
         lines = f.readlines()
