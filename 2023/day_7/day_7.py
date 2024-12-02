@@ -16,7 +16,7 @@ class Card:
         if not symbol in set(Card.symbols):
             raise ValueError(f"Invalid symbol: {symbol}")
         self.symbol = symbol
-        self.strength = Card.strengths[self.symbol]
+        self.strength = self.strengths[self.symbol]
 
     def __gt__(self, card2):
         return self.strength > card2.strength
@@ -96,13 +96,32 @@ class Hand:
         return cls(cards, int(bid))
 
 
-def load_file(filename: str) -> list[Hand]:
+def JokerHand(Hand):
+    """A special case of the hand where the Joker rule is considered."""
+
+    @staticmethod
+    def frequency_pattern(cards) -> tuple:
+        """Returns the sorted frequency pattern of a set of cards"""
+        frequencies = defaultdict(lambda: 0)
+        for c in cards:
+            frequencies[c.symbol] += 1
+
+        if 'J' in frequencies:
+            joker_count = frequencies['J']
+            del frequencies['J']
+
+        frequency_pattern = tuple(sorted(frequencies.values(), reverse=True))
+        frequency_pattern[0] += joker_count
+        return frequency_pattern
+
+
+def load_file(filename: str, hand_class=Hand) -> list[Hand]:
     '''Loads the file as a list of hands'''
     hands = []
     with open(filename, "r") as f:
         lines = f.readlines()
         for l in lines:
-            hands.append(Hand.from_line(l))
+            hands.append(hand_class.from_line(l))
     return hands
 
 
@@ -115,6 +134,9 @@ def one_star(filename: str) -> int:
 
 def two_star(filename: str):
     '''Returns the two star solution'''
+    hands = load_file(filename, hand_class=JokerHand)
+    hands.sort()
+    return sum([(i+1)*h.bid for i, h in enumerate(hands)])
 
 
 if __name__ == "__main__":
