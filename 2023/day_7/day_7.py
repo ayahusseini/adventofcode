@@ -8,13 +8,13 @@ TEST_FILE = "inputs/day_7_test_input.txt"
 
 class Card:
     """A card within a hand"""
-    symbols = ['A', 'K', 'Q', 'J', '9', '8', '7', '6', '5', '4', '3', '2']
+    symbols = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
     strengths = {s: i for i, s in enumerate(symbols[::-1])}
 
     def __init__(self, symbol: str):
         """Instantiate a card"""
-        if not symbol in Card.symbols:
-            raise ValueError("Invalid symbol")
+        if not symbol in set(Card.symbols):
+            raise ValueError(f"Invalid symbol: {symbol}")
         self.symbol = symbol
         self.strength = Card.strengths[self.symbol]
 
@@ -42,12 +42,43 @@ class Hand:
 
     def __init__(self, cards: list[Card], bid: int):
         """Instantiates a hand"""
+
+        if len(cards) != 5:
+            raise ValueError("A hand must have 5 cards")
+
         self.cards = cards
         self.bid = bid
         self.hand_type = Hand.frequency_id[self.frequency_pattern(cards)]
 
+    def __eq__(self, hand2) -> bool:
+        """Returns True if two hands are equal"""
+        return self.cards == hand2.cards
+
+    def __gt__(self, hand2) -> bool:
+        """Returns True if this hand is greater than hand2"""
+        if self.hand_type != hand2.hand_type:
+            return self.hand_type > hand2.hand_type
+        return self.are_cards_stronger(hand2)
+
+    def __lt__(self, hand2) -> bool:
+        """Returns True if this hand is less than hand2"""
+        if self.hand_type != hand2.hand_type:
+            return self.hand_type < hand2.hand_type
+
+        return self.are_cards_stronger(hand2) == False
+
+    def __str__(self):
+        return "".join([c.symbol for c in self.cards])
+
     def are_cards_stronger(self, hand2) -> bool:
         """Compares the card-by-card strength of two hands"""
+
+        for c1, c2 in zip(self.cards, hand2.cards):
+            if c1 != c2:
+
+                return c1 > c2
+
+        return False
 
     @staticmethod
     def frequency_pattern(cards) -> tuple:
@@ -65,15 +96,21 @@ class Hand:
         return cls(cards, int(bid))
 
 
-def load_file(filename: str) -> list:
-    '''Loads the file as '''
-
+def load_file(filename: str) -> list[Hand]:
+    '''Loads the file as a list of hands'''
+    hands = []
     with open(filename, "r") as f:
         lines = f.readlines()
+        for l in lines:
+            hands.append(Hand.from_line(l))
+    return hands
 
 
 def one_star(filename: str) -> int:
     '''Returns the one star solution'''
+    hands = load_file(filename)
+    hands.sort()
+    return sum([(i+1)*h.bid for i, h in enumerate(hands)])
 
 
 def two_star(filename: str):
