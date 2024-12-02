@@ -16,28 +16,38 @@ class Report:
         """Instantiates a report from a line"""
         return cls(list(map(lambda x: int(x), line.split(' '))))
 
-    def is_safe(self, num_removals: int = 0) -> bool:
+    def is_safe(self) -> bool:
         """Returns True if a report is safe"""
         is_increasing = None
-        invalid_count = 0
 
-        for dif in self.get_differences():
+        for dif in self.get_differences(self.numbers):
             if is_increasing is None:
                 is_increasing = dif > 0
             else:
                 if is_increasing is not (dif > 0):
-                    invalid_count += 1
+                    return False
             if abs(dif) not in range(1, 4):
-                invalid_count += 1
-            if invalid_count > num_removals:
                 return False
+
         return True
 
-    def get_differences(self):
+    def is_safe_with_removal(self):
+        full_numbers = self.numbers.copy()
+        for i in range(len(self.numbers)):
+            self.numbers = full_numbers[:i] + full_numbers[i+1:]
+            if self.is_safe():
+                self.numbers = full_numbers
+                return True
+
+        self.numbers = full_numbers
+        return False
+
+    @staticmethod
+    def get_differences(numbers):
         """Returns the differences between adjacent pairs"""
         differences = []
-        for i in range(0, len(self.numbers)-1):
-            yield self.numbers[i] - self.numbers[i+1]
+        for i in range(0, len(numbers)-1):
+            yield numbers[i] - numbers[i+1]
 
 
 def load_file(filename: str) -> list[Report]:
@@ -59,7 +69,7 @@ def one_star(filename: str) -> int:
 def two_star(filename: str):
     '''Returns the two star solution'''
     reports = load_file(filename)
-    return sum([r.is_safe(num_removals=1) for r in reports])
+    return sum([r.is_safe_with_removal() for r in reports])
 
 
 if __name__ == "__main__":
