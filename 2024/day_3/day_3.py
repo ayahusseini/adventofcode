@@ -7,11 +7,10 @@ INPUT_FILE = "inputs/day_4_input.txt"
 TEST_FILE = "inputs/day_4_test_input.txt"
 
 
-def extract_multiplication_instructions(memory: str) -> list[tuple[int, int]]:
+def extract_multiplication_instructions(memory: str) -> list[tuple[str, str]]:
     """Returns a list of multiplication instructions as a list of tuples
     to multiply"""
-    pairs = re.findall(r"mul\((\d+),(\d+)\)", memory)
-    return [(int(x), int(y)) for x, y in pairs]
+    return re.findall(r"mul\((\d+),(\d+)\)", memory)
 
 
 def load_file(filename: str) -> list[int]:
