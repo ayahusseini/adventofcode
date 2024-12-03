@@ -32,7 +32,7 @@ def read_conditional_instructions(instructions: list[tuple]) -> int:
     return total
 
 
-def load_file(filename: str, extraction_pattern: str = r"mul\((\d+),(\d+)\)") -> list[int]:
+def load_file(filename: str, extraction_pattern: str) -> list[int]:
     '''Loads the file and returns a list of multiplication instructions'''
     with open(filename, 'r') as f:
         instructions = extract_multiplication_instructions(
@@ -42,13 +42,13 @@ def load_file(filename: str, extraction_pattern: str = r"mul\((\d+),(\d+)\)") ->
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    instructions = load_file(filename)
+    instructions = load_file(filename, MULTIPLICATION_PATTERN)
     return sum([int(x)*int(y) for x, y in instructions])
 
 
 def two_star(filename: str):
     '''Returns the two star solution'''
-    instructions = load_file(filename)
+    instructions = load_file(filename, CONDITIONAL_MULTIPLICATION_PATTERN)
     return read_conditional_instructions(instructions)
 
 
