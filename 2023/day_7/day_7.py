@@ -1,5 +1,6 @@
 '''Solution to advent of code day 7 2023
 '''
+
 from collections import defaultdict
 
 INPUT_FILE = "inputs/day_7_input.txt"
