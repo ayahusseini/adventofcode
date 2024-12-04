@@ -61,7 +61,7 @@ class WordSearch:
             raise ValueError(
                 "The word must have an odd number of letters to form a cross pattern.")
 
-        last_letter = self.find_word(word, WordSearch.diagonal)
+        last_letter = self.find_target(word, WordSearch.diagonal)
         steps = len(word) // 2
         middles = set()
         count = 0
@@ -91,13 +91,13 @@ def load_file(filename: str) -> WordSearch:
 def one_star(filename: str) -> int:
     """Compute the one-star solution."""
     word_search = load_file(filename)
-    return word_search.count_word('XMAS', WordSearch.all_directions)
+    return word_search.count_target('XMAS', WordSearch.all_directions)
 
 
 def two_star(filename: str) -> int:
     """Compute the two-star solution."""
     word_search = load_file(filename)
-    return word_search.count_cross_patterns('MAS')
+    return word_search.count_crosses('MAS')
 
 
 if __name__ == "__main__":
