@@ -1,13 +1,9 @@
 '''Solution to advent of code day 4 2024
 '''
 import numpy as np
-from collections import defaultdict, namedtuple
 
 INPUT_FILE = "inputs/day_4_input.txt"
 TEST_FILE = "inputs/day_4_test_input.txt"
-
-
-Word = namedtuple('Word', ['orientation', 'word', 'is_backwards'])
 
 
 class WordSearch:
@@ -32,7 +28,7 @@ class WordSearch:
         return self._is_index_valid(nr, nc) and self.lines[nr, nc] == nextletter
 
     def find_target(self, target: str, directions: list[tuple]) -> list:
-        """Finds the start index and direction where a target word appears in some lines"""
+        """Finds the end index and direction where a target word appears in some lines"""
 
         if not target:
             raise ValueError("Target must be at least one letter")
