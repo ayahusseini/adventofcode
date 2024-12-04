@@ -15,7 +15,7 @@ class WordSearch:
     def __init__(self, lines: list[list]):
         """Instantiates a word search object"""
         self.lines = np.array(lines)
-        self.nrows, self.ncols = self.grid.shape
+        self.nrows, self.ncols = self.lines.shape
 
     def _is_index_valid(self, row: int, col: int) -> bool:
         """Check if an index is within the array"""
@@ -28,12 +28,10 @@ class WordSearch:
 
     def find_target(self, target: str, directions: list[tuple]) -> list:
         """Find all occurrences of a word in the grid and return their end indices with directions."""
-
         if not target:
-            raise ValueError("Target must be at least one letter")
+            raise ValueError("Word must contain at least one letter.")
 
         start_letter = np.where(self.lines == target[0])
-
         stack = [(r, c, 0, None) for r, c in zip(*start_letter)]
         indeces = []
 
@@ -54,28 +52,23 @@ class WordSearch:
         return indeces
 
     def count_target(self, word: str, allowed_directions: list[tuple]) -> int:
-        """Finds the number of times a target word appears in lines"""
-
+        """Finds the number of times a target word appears in lines."""
         return len(self.find_target(word, allowed_directions))
 
     def count_crosses(self, word: str):
-        """Counts the number of times a target word appears in a crossed pattern"""
-
-        last_letter = self.find_target(word, directions=WordSearch.diagonal)
-
+        """Count the number of crosses formed by the word in diagonal directions."""
         if len(word) % 2 == 0:
             raise ValueError(
-                "The target word must have an odd number of letters")
+                "The word must have an odd number of letters to form a cross pattern.")
+
+        last_letter = self.find_word(word, WordSearch.diagonal)
         steps = len(word) // 2
-
         middles = set()
-
         count = 0
 
         for r, c, change in last_letter:
-
-            centre = (r - change[0] * steps,
-                      c - change[1] * steps)
+            centre = (r - (change[0] * steps),
+                      c - (change[1] * steps))
             if centre in middles:
                 count += 1
             else:
@@ -89,23 +82,22 @@ class WordSearch:
 
 
 def load_file(filename: str) -> WordSearch:
-    '''Loads the file'''
-    with open(filename, "r") as f:
-        lines = f.readlines()
-
-    return WordSearch([list(l.replace('\n', '')) for l in lines if l])
-
-
-def one_star(filename: str):
-    '''Returns the one star solution'''
-    ws = load_file(filename)
-    return ws.count_target('XMAS', allowed_directions=WordSearch.all_directions)
+    """Load the grid from a file and return a WordSearch object."""
+    with open(filename, "r") as file:
+        lines = [list(line.strip()) for line in file if line.strip()]
+    return WordSearch(lines)
 
 
-def two_star(filename: str):
-    '''Returns the two star solution'''
-    ws = load_file(filename)
-    return ws.count_crosses('MAS')
+def one_star(filename: str) -> int:
+    """Compute the one-star solution."""
+    word_search = load_file(filename)
+    return word_search.count_word('XMAS', WordSearch.all_directions)
+
+
+def two_star(filename: str) -> int:
+    """Compute the two-star solution."""
+    word_search = load_file(filename)
+    return word_search.count_cross_patterns('MAS')
 
 
 if __name__ == "__main__":
