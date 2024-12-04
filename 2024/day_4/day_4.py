@@ -12,14 +12,19 @@ Word = namedtuple('Word', ['orientation', 'word', 'is_backwards'])
 
 class WordSearch:
     """Word search class"""
-    __directions = [(1, 1), (1, -1), (-1, 1), (-1, -1),
-                    (1, 0), (-1, 0), (0, 1), (0, -1)]
+    __diagonal = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+    __horizontal = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    __directions = __diagonal + __horizontal
 
     def __init__(self, lines: list[list]):
         """Instantiates a word search object"""
         self.lines = np.array(lines)
         self.nrows = self.lines.shape[0]
         self.ncols = self.lines.shape[1]
+
+    def _is_index_valid(self, row: int, col: int) -> bool:
+        """Returns True if an index is within the array"""
+        return 0 <= row < self.nrows and 0 <= col < self.ncols
 
     def count_target(self, target) -> int:
         """Finds the number of times a target word appears in lines"""
@@ -33,6 +38,7 @@ class WordSearch:
         count = 0
 
         while stack:
+
             row, col, letteridx, direction = stack.pop()
             if direction is None:
                 for d in WordSearch.__directions:
