@@ -12,9 +12,9 @@ Word = namedtuple('Word', ['orientation', 'word', 'is_backwards'])
 
 class WordSearch:
     """Word search class"""
-    __diagonal = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
-    __horizontal = [(1, 0), (-1, 0), (0, 1), (0, -1)]
-    __directions = __diagonal + __horizontal
+    diagonal = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+    horizontal = [(1, 0), (-1, 0), (0, 1), (0, -1)]
+    all_directions = diagonal + horizontal
 
     def __init__(self, lines: list[list]):
         """Instantiates a word search object"""
@@ -26,32 +26,72 @@ class WordSearch:
         """Returns True if an index is within the array"""
         return 0 <= row < self.nrows and 0 <= col < self.ncols
 
-    def count_target(self, target) -> int:
-        """Finds the number of times a target word appears in lines"""
-        # find the first letter of the target word
+    def __is_next_letter(self, row: int, col: int, direction: tuple, nextletter: str) -> bool:
+        """Returns True if moving in a direction gives the correct next letter"""
+        nr, nc = row + direction[0], col + direction[1]
+        return self._is_index_valid(nr, nc) and self.lines[nr, nc] == nextletter
+
+    def find_target(self, target: str, directions: list[tuple]) -> list:
+        """Finds the start index and direction where a target word appears in some lines"""
+
+        if not target:
+            raise ValueError("Target must be at least one letter")
+
         start_letter = np.where(self.lines == target[0])
 
         if len(target) == 1:
-            return len(start_letter)
+            return [(r, c, None) for r, c in zip(*start_letter)]
 
         stack = [(r, c, 0, None) for r, c in zip(*start_letter)]
-        count = 0
+        indeces = []
 
         while stack:
 
-            row, col, letteridx, direction = stack.pop()
-            if direction is None:
-                for d in WordSearch.__directions:
-                    dr, dc = d
-                    if 0 <= row + dr < self.nrows and 0 <= col + dc < self.ncols:
-                        if self.lines[row + dr, col + dc] == target[1]:
-                            stack.append((row + dr, col + dc, 1, d))
+            r, c, letteridx, change = stack.pop()
+
+            if change is None:
+                for d in directions:
+                    if self.__is_next_letter(r, c, d, target[1]):
+                        stack.append((r + d[0], c + d[1], 1, d))
+
             elif letteridx < len(target) - 1:
-                dr, dc = direction
-                if 0 <= row + dr < self.nrows and 0 <= col + dc < self.ncols and self.lines[row + dr, col + dc] == target[letteridx + 1]:
-                    stack.append((row + dr, col + dc, letteridx+1, direction))
+                expected = target[letteridx + 1]
+                if self.__is_next_letter(r, c, change, expected):
+                    stack.append(
+                        (r + change[0], c + change[1], letteridx+1, change))
+
             elif letteridx == len(target) - 1:
+                indeces.append([r, c, change])
+
+        return indeces
+
+    def count_target(self, word: str, allowed_directions: list[tuple]) -> int:
+        """Finds the number of times a target word appears in lines"""
+
+        return len(self.find_target(word, allowed_directions))
+
+    def count_crosses(self, word: str):
+        """Counts the number of times a target word appears in a crossed pattern"""
+
+        last_letter = self.find_target(word, directions=WordSearch.diagonal)
+
+        if len(word) % 2 == 0:
+            raise ValueError(
+                "The target word must have an odd number of letters")
+        steps = len(word) // 2
+
+        middles = set()
+
+        count = 0
+
+        for r, c, change in last_letter:
+
+            centre = (r - change[0] * steps,
+                      c - change[1] * steps)
+            if centre in middles:
                 count += 1
+            else:
+                middles.add(centre)
 
         return count
 
@@ -71,12 +111,13 @@ def load_file(filename: str) -> WordSearch:
 def one_star(filename: str):
     '''Returns the one star solution'''
     ws = load_file(filename)
-    return ws.count_target('XMAS')
+    return ws.count_target('XMAS', allowed_directions=WordSearch.all_directions)
 
 
 def two_star(filename: str):
     '''Returns the two star solution'''
-    return
+    ws = load_file(filename)
+    return ws.count_crosses('MAS')
 
 
 if __name__ == "__main__":
