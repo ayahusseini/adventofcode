@@ -15,48 +15,40 @@ class WordSearch:
     def __init__(self, lines: list[list]):
         """Instantiates a word search object"""
         self.lines = np.array(lines)
-        self.nrows = self.lines.shape[0]
-        self.ncols = self.lines.shape[1]
+        self.nrows, self.ncols = self.grid.shape
 
     def _is_index_valid(self, row: int, col: int) -> bool:
-        """Returns True if an index is within the array"""
+        """Check if an index is within the array"""
         return 0 <= row < self.nrows and 0 <= col < self.ncols
 
     def _is_next_letter(self, row: int, col: int, direction: tuple, nextletter: str) -> bool:
-        """Returns True if moving in a direction gives the correct next letter"""
+        """Check if the next letter matches the expected value in a given direction."""
         nr, nc = row + direction[0], col + direction[1]
         return self._is_index_valid(nr, nc) and self.lines[nr, nc] == nextletter
 
     def find_target(self, target: str, directions: list[tuple]) -> list:
-        """Finds the end index and direction where a target word appears in some lines"""
+        """Find all occurrences of a word in the grid and return their end indices with directions."""
 
         if not target:
             raise ValueError("Target must be at least one letter")
 
         start_letter = np.where(self.lines == target[0])
 
-        if len(target) == 1:
-            return [(r, c, None) for r, c in zip(*start_letter)]
-
         stack = [(r, c, 0, None) for r, c in zip(*start_letter)]
         indeces = []
 
         while stack:
-
-            r, c, letteridx, change = stack.pop()
-
+            r, c, idx, change = stack.pop()
             if change is None:
                 for d in directions:
                     if self._is_next_letter(r, c, d, target[1]):
                         stack.append((r + d[0], c + d[1], 1, d))
-
-            elif letteridx < len(target) - 1:
-                expected = target[letteridx + 1]
+            elif idx < len(target) - 1:
+                expected = target[idx + 1]
                 if self._is_next_letter(r, c, change, expected):
                     stack.append(
-                        (r + change[0], c + change[1], letteridx+1, change))
-
-            elif letteridx == len(target) - 1:
+                        (r + change[0], c + change[1], idx+1, change))
+            else:
                 indeces.append([r, c, change])
 
         return indeces
