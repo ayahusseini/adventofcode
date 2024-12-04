@@ -26,7 +26,7 @@ class WordSearch:
         """Returns True if an index is within the array"""
         return 0 <= row < self.nrows and 0 <= col < self.ncols
 
-    def __is_next_letter(self, row: int, col: int, direction: tuple, nextletter: str) -> bool:
+    def _is_next_letter(self, row: int, col: int, direction: tuple, nextletter: str) -> bool:
         """Returns True if moving in a direction gives the correct next letter"""
         nr, nc = row + direction[0], col + direction[1]
         return self._is_index_valid(nr, nc) and self.lines[nr, nc] == nextletter
@@ -51,12 +51,12 @@ class WordSearch:
 
             if change is None:
                 for d in directions:
-                    if self.__is_next_letter(r, c, d, target[1]):
+                    if self._is_next_letter(r, c, d, target[1]):
                         stack.append((r + d[0], c + d[1], 1, d))
 
             elif letteridx < len(target) - 1:
                 expected = target[letteridx + 1]
-                if self.__is_next_letter(r, c, change, expected):
+                if self._is_next_letter(r, c, change, expected):
                     stack.append(
                         (r + change[0], c + change[1], letteridx+1, change))
 
