@@ -31,32 +31,19 @@ class RuleSet:
         if not pagenum in self.pages:
             self.pages[pagenum] = Page(pagenum)
 
-    def add_rule(self, beforenum: int, afternum: int):
+    def add_rule(self, before: int, after: int):
         """Adds an ordering rule and accounts for transitive dependencies."""
-        self.add_page(beforenum)
-        self.add_page(afternum)
+        self.add_page(before)
+        self.add_page(after)
 
-        stack = [self[beforenum]]
-        while stack:
-            current_page = stack.pop()
-            for p in current_page.next:
-                if p not in self[beforenum].next:
-                    self[beforenum].next.add(p)
-                    stack.append(p)
-
-        self[beforenum].next.add(self[afternum])
+        self[before].next.add(self[after])
 
     def is_sorted(self, pages: list[int]):
         """Returns True if a list of page numbers is sorted in increasing order."""
-        for i in range(0, len(pages) - 1):
+        for i in range(len(pages)-1):
             p1, p2 = pages[i], pages[i+1]
-
-            if p1 not in self.pages or p2 not in self.pages:
-                raise ValueError(f"Not enough information about {p1,p2}")
-
-            if not self[p2] in self[p1].next:
+            if (self[p1] in self[p2].next) or (self[p2] not in self[p1].next):
                 return False
-
         return True
 
 
@@ -90,9 +77,11 @@ def one_star(filename: str):
     '''Returns the one star solution'''
     rules, orders = load_file(filename)
     total = 0
+
     for order in orders:
         if rules.is_sorted(order):
             total += get_middle_number(order)
+
     return total
 
 

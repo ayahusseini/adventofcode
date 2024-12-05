@@ -1,5 +1,5 @@
 import pytest
-from day_5 import load_file, RuleSet, TEST_FILE
+from day_5 import load_file, RuleSet, TEST_FILE, INPUT_FILE
 
 
 @pytest.fixture
@@ -11,29 +11,24 @@ def rs():
     return rules
 
 
-def test_transitive_dependencies():
-    """Tests that transitive dependencies are accounted for"""
-    rules = RuleSet()
-    rules.add_rule(1, 2)
-    rules.add_rule(2, 3)
-    assert rules[1].next == {rules[2], rules[3]}
-    assert rules[2].next == {rules[3]}
-    assert rules[3].next == set()
-
-
-def test_transitive_dependencies2():
-    """Tests that transitive dependencies are accounted for"""
-    rules = RuleSet()
-    rules.add_rule(2, 3)
-    rules.add_rule(1, 2)
-    assert rules[1].next == {rules[2], rules[3]}
-    assert rules[2].next == {rules[3]}
-    assert rules[3].next == set()
-
-
 @pytest.fixture
 def example_rules_and_orders():
     return load_file(TEST_FILE)
+
+
+@pytest.fixture
+def example_rules_and_orders_large():
+    return load_file(INPUT_FILE)
+
+
+def test_correct_ordering(example_rules_and_orders_large):
+    rules, orders = example_rules_and_orders_large
+    correct_order = orders[0]
+    assert rules[57] in rules[75].next
+    assert rules[28] in rules[57].next
+    assert rules[17] in rules[28].next
+    assert rules[96] in rules[17].next
+    assert rules.is_sorted(correct_order)
 
 
 def test_correct_orders_found(example_rules_and_orders):
@@ -49,14 +44,6 @@ def test_pages_added(rs):
     assert rs[47].next == set()
     assert rs[7].next == {rs[5], rs[47]}
     assert rs[5].next == {rs[47]}
-
-
-def test_implied_order_is_correct(rs):
-    rs.add_rule(43, 7)
-    assert rs[47].next == set()
-    assert rs[7].next == {rs[5], rs[47]}
-    assert rs[5].next == {rs[47]}
-    assert rs[43].next == {rs[7], rs[47], rs[5]}
 
 
 def test_is_sorted(rs):
