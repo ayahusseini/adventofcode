@@ -17,6 +17,18 @@ def test_transitive_dependencies():
     rules.add_rule(1, 2)
     rules.add_rule(2, 3)
     assert rules[1].next == {rules[2], rules[3]}
+    assert rules[2].next == {rules[3]}
+    assert rules[3].next == set()
+
+
+def test_transitive_dependencies2():
+    """Tests that transitive dependencies are accounted for"""
+    rules = RuleSet()
+    rules.add_rule(2, 3)
+    rules.add_rule(1, 2)
+    assert rules[1].next == {rules[2], rules[3]}
+    assert rules[2].next == {rules[3]}
+    assert rules[3].next == set()
 
 
 @pytest.fixture

@@ -10,9 +10,6 @@ class Page:
         self.page_num = num
         self.next = set()
 
-    def __gt__(self, page2):
-        return not (page2 in self.next)
-
     def __str__(self):
         return str(self.page_num)
 
@@ -35,12 +32,17 @@ class RuleSet:
             self.pages[pagenum] = Page(pagenum)
 
     def add_rule(self, beforenum: int, afternum: int):
-        """Adds an ordering rule"""
+        """Adds an ordering rule and accounts for transitive dependencies."""
         self.add_page(beforenum)
         self.add_page(afternum)
 
-        for page in (self[afternum], *self[afternum].next):
-            self[beforenum].next.add(page)
+        righthand = (self[afternum], *self[afternum].next)
+
+        for _, page in self.pages.items():
+            if self[beforenum] in page.next:
+                page.next.update(righthand)
+
+        self[beforenum].next.update(righthand)
 
     def is_sorted(self, pages: list[int]):
         """Returns True if a list of page numbers is sorted in increasing order."""
@@ -48,8 +50,9 @@ class RuleSet:
             p1, p2 = pages[i:i+2]
             if p1 not in self.pages or p2 not in self.pages:
                 raise ValueError(f"Not enough information about {p1,p2}")
-            if self.pages[p1] > self.pages[p2]:
+            if not self[p2] in self[p1].next:
                 return False
+
         return True
 
 
