@@ -36,20 +36,24 @@ class RuleSet:
         self.add_page(beforenum)
         self.add_page(afternum)
 
-        righthand = (self[afternum], *self[afternum].next)
+        stack = [self[beforenum]]
+        while stack:
+            current_page = stack.pop()
+            for p in current_page.next:
+                if p not in self[beforenum].next:
+                    self[beforenum].next.add(p)
+                    stack.append(p)
 
-        for _, page in self.pages.items():
-            if self[beforenum] in page.next:
-                page.next.update(righthand)
-
-        self[beforenum].next.update(righthand)
+        self[beforenum].next.add(self[afternum])
 
     def is_sorted(self, pages: list[int]):
         """Returns True if a list of page numbers is sorted in increasing order."""
         for i in range(0, len(pages) - 1):
-            p1, p2 = pages[i:i+2]
+            p1, p2 = pages[i], pages[i+1]
+
             if p1 not in self.pages or p2 not in self.pages:
                 raise ValueError(f"Not enough information about {p1,p2}")
+
             if not self[p2] in self[p1].next:
                 return False
 
