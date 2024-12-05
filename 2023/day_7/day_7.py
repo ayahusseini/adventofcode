@@ -34,8 +34,8 @@ class Card:
 
 class SpecialCard(Card):
     """A card within a special hand where Joker is the weakest symbol."""
-    symbols = ['Joker'] + Card.symbols
-    strengths = {s: i for i, s in enumerate(symbols)}
+    symbols = ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J']
+    strengths = {s: i for i, s in enumerate(symbols[::-1])}
 
     def __init__(self, symbol: str):
         """Instantiate a special card"""
@@ -53,6 +53,7 @@ class Hand:
         (4, 1): 5,
         (5,): 6
     }
+    card_type = Card
 
     def __init__(self, cards: list[Card], bid: int):
         """Instantiates a hand"""
@@ -78,7 +79,7 @@ class Hand:
         if self.hand_type != hand2.hand_type:
             return self.hand_type < hand2.hand_type
 
-        return self.are_cards_stronger(hand2) == False
+        return not self.are_cards_stronger(hand2)
 
     def __str__(self):
         return "".join([c.symbol for c in self.cards])
@@ -105,27 +106,42 @@ class Hand:
     def from_line(cls, line: str):
         """Instantiates a hand from an input line"""
         hand, bid = line.split(' ')
-        cards = [Card(l) for l in hand]
+        cards = [cls.card_type(l) for l in hand]
         return cls(cards, int(bid))
 
 
-def JokerHand(Hand):
+class JokerHand(Hand):
     """A special case of the hand where the Joker rule is considered."""
+    card_type = SpecialCard
+
+    def __init__(self, cards: list[Card], bid: int):
+        super().__init__(cards, bid)
+
+    @classmethod
+    def from_line(cls, line: str):
+        """Instantiates a hand from an input line"""
+        hand, bid = line.split(' ')
+        cards = [SpecialCard(l) for l in hand]
+        return cls(cards, int(bid))
 
     @staticmethod
     def frequency_pattern(cards) -> tuple:
         """Returns the sorted frequency pattern of a set of cards"""
         frequencies = defaultdict(lambda: 0)
+
         for c in cards:
             frequencies[c.symbol] += 1
 
+        joker_count = 0
         if 'J' in frequencies:
             joker_count = frequencies['J']
             del frequencies['J']
 
-        frequency_pattern = tuple(sorted(frequencies.values(), reverse=True))
+        frequency_pattern = sorted(frequencies.values(), reverse=True)
+        if not frequency_pattern:
+            return (5,)
         frequency_pattern[0] += joker_count
-        return frequency_pattern
+        return tuple(frequency_pattern)
 
 
 def load_file(filename: str, hand_class=Hand) -> list[Hand]:
