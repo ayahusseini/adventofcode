@@ -1,6 +1,4 @@
 '''Solution to advent of code day 4 2022
-
-Puzzle input = pairs of ranges
 '''
 
 INPUT_FILE = "inputs/day_4_input.txt"

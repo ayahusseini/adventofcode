@@ -1,12 +1,7 @@
 '''
-Each rucksack has 2 large compartments.
-All items of a given type go into 1 compartment. This isn't true for exactly ONE compartment.
-
-input = list of rucksacks
-    - rucksack = line in the file consisting of items. Each rucksack has 2 compartments.
-        - item = single uppercase or lowercase letters
-    - Each compartment has the same number of items
+Solution for advent of code day 3 2022
 '''
+
 FILE = "inputs/day_3_input.txt"
 
 
