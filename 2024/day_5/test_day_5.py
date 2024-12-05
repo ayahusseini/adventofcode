@@ -11,6 +11,14 @@ def rs():
     return rules
 
 
+def test_transitive_dependencies():
+    """Tests that transitive dependencies are accounted for"""
+    rules = RuleSet()
+    rules.add_rule(1, 2)
+    rules.add_rule(2, 3)
+    assert rules[1].next == {rules[2], rules[3]}
+
+
 @pytest.fixture
 def example_rules_and_orders():
     return load_file(TEST_FILE)

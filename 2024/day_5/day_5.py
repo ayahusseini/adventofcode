@@ -71,14 +71,22 @@ def load_file(filename: str) -> tuple[RuleSet, list[list]]:
     return rs, page_orders
 
 
+def get_middle_number(numbers: list[int]) -> int:
+    """Returns the middle element of a list"""
+    length = len(numbers)
+    if length % 2 == 0:
+        raise ValueError("List must be of odd length.")
+    return numbers[length//2]
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
     rules, orders = load_file(filename)
-    sum = 0
+    total = 0
     for order in orders:
         if rules.is_sorted(order):
-            sum += order[len(order)//2]
-    return sum
+            total += get_middle_number(order)
+    return total
 
 
 def two_star(filename: str):
@@ -86,7 +94,6 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-
     print(f"One star test solution is {one_star(TEST_FILE)}")
     print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
