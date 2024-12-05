@@ -6,7 +6,7 @@ TEST_FILE = "inputs/day_5_test_input.txt"
 
 
 class Page:
-    def __init__(self, num: str):
+    def __init__(self, num: int):
         self.page_num = num
         self.next = set()
 

@@ -14,3 +14,5 @@ def rs():
 def test_pages_added(rs):
     assert rs.pages.keys() == {7, 5, 47}
     assert rs[47].next == set()
+    assert rs[7].next == {rs[5], rs[47]}
+    assert rs[5].next == {rs[47]}
