@@ -2,11 +2,17 @@ import pytest
 from day_5 import Page, RuleSet, TEST_FILE
 
 
-def test_overlapping_rules():
-    rs = RuleSet()
-    p75 = Page('75')
-    p47 = Page('47')
-    p9 = Page('9')
-    rs.add_rule(p75, p47)
-    rs.add_rule(p75, p9)
-    assert rs.pages['75'].next == {p47, p9}
+@pytest.fixture
+def rs():
+    rules = RuleSet()
+    rules.add_rule(Page('75'), Page('47'))
+    rules.add_rule(Page('75'), Page('9'))
+    return rules
+
+
+def test_overlapping_rules(rs):
+    assert rs.pages['75'].next == {rs.pages['47'], rs.pages['9']}
+
+
+def test_sorting(rs):
+    assert rs.is_sorted(['75', '47', '9'])
