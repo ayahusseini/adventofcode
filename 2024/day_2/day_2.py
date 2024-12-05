@@ -45,7 +45,7 @@ class Report:
     @staticmethod
     def get_differences(numbers):
         """Returns the differences between adjacent pairs"""
-        differences = []
+
         for i in range(0, len(numbers)-1):
             yield numbers[i] - numbers[i+1]
 
