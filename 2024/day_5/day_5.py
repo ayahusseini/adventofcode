@@ -17,6 +17,9 @@ class Page:
     def __str__(self):
         return str(self.page_num)
 
+    def __repr__(self):
+        return str(self.page_num)
+
 
 class RuleSet:
     def __init__(self):
@@ -30,13 +33,14 @@ class RuleSet:
         if before in self.pages:
             for page in before.prev:
                 page.next.add(after)
+        else:
+            self.pages[before.page_num] = before
 
         if after in self.pages:
             for page in after.next:
                 page.prev.add(before)
-
-        self.pages[after.page_num] = after
-        self.pages[before.page_num] = before
+        else:
+            self.pages[after.page_num] = after
 
     def is_sorted(self, pages: list[int]):
         """Returns True if a list of page numbers is sorted in increasing order."""
