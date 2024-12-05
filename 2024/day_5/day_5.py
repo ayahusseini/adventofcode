@@ -22,9 +22,11 @@ class Page:
 
 class RuleSet:
     def __init__(self):
+        """Instantiates a set of rules"""
         self.pages = dict()
 
     def __getitem__(self, val):
+        """Returns the key associated with val"""
         return self.pages[val]
 
     def add_page(self, pagenum: int):
@@ -51,17 +53,32 @@ class RuleSet:
         return True
 
 
-def load_file(filename: str):
-    '''Loads the file'''
+def load_file(filename: str) -> tuple[RuleSet, list[list]]:
+    """Loads the file as a set of Rules and a list of page updates"""
+    rs = RuleSet()
+    page_orders = []
 
     with open(filename, "r") as f:
         lines = f.readlines()
+        for l in lines:
+            l = l.replace('\n', '').strip()
+            if "|" in l:
+                num1, num2 = l.split('|')
+                rs.add_rule(int(num1), int(num2))
+            elif ',' in l:
+                page_orders.append([int(n) for n in l.split(',')])
 
-    return lines
+    return rs, page_orders
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
+    rules, orders = load_file(filename)
+    sum = 0
+    for order in orders:
+        if rules.is_sorted(order):
+            sum += order[len(order)//2]
+    return sum
 
 
 def two_star(filename: str):
