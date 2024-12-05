@@ -8,7 +8,7 @@ TEST_FILE = "inputs/day_7_test_input.txt"
 
 
 class Card:
-    """A card within a hand"""
+    """A card within a hand."""
     symbols = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
     strengths = {s: i for i, s in enumerate(symbols[::-1])}
 
@@ -28,6 +28,19 @@ class Card:
     def __eq__(self, card2):
         return self.strength == card2.strength
 
+    def __repr__(self) -> str:
+        return f"{self.symbol}"
+
+
+class SpecialCard(Card):
+    """A card within a special hand where Joker is the weakest symbol."""
+    symbols = ['Joker'] + Card.symbols
+    strengths = {s: i for i, s in enumerate(symbols)}
+
+    def __init__(self, symbol: str):
+        """Instantiate a special card"""
+        super().__init__(symbol)
+
 
 class Hand:
     """A collection of cards"""
@@ -43,7 +56,6 @@ class Hand:
 
     def __init__(self, cards: list[Card], bid: int):
         """Instantiates a hand"""
-
         if len(cards) != 5:
             raise ValueError("A hand must have 5 cards")
 
