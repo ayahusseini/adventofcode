@@ -16,6 +16,12 @@ class Page:
     def __repr__(self):
         return str(self.page_num)
 
+    def __gt__(self, page2):
+        return self in page2.next
+
+    def __lt__(self, page2):
+        return page2 in self.next
+
 
 class RuleSet:
     def __init__(self):
@@ -87,6 +93,16 @@ def one_star(filename: str):
 
 def two_star(filename: str):
     '''Returns the two star solution'''
+    rules, orders = load_file(filename)
+    total = 0
+
+    for order in orders:
+        if not rules.is_sorted(order):
+            ordered_pages = [rules[i] for i in order]
+            ordered_pages.sort()
+            total += get_middle_number(ordered_pages).page_num
+
+    return total
 
 
 if __name__ == "__main__":
