@@ -16,3 +16,11 @@ def test_pages_added(rs):
     assert rs[47].next == set()
     assert rs[7].next == {rs[5], rs[47]}
     assert rs[5].next == {rs[47]}
+
+
+def test_implied_order_is_correct(rs):
+    rs.add_rule(43, 7)
+    assert rs[47].next == set()
+    assert rs[7].next == {rs[5], rs[47]}
+    assert rs[5].next == {rs[47]}
+    assert rs[43].next == {rs[7], rs[47], rs[5]}
