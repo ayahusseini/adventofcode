@@ -33,6 +33,24 @@ class CrateStack:
         return cls(stacks)
 
 
+def load_file(filename: str) -> tuple[CrateStack, list[Move]]:
+    """Loads the file as an initial stack and a list of moves"""
+    stacklines = []
+    moves = []
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+    parsing_moves = False
+    for l in lines:
+        if not l:
+            parsing_moves = True
+            continue
+        if not parsing_moves:
+            moves.append(l)
+        else:
+            stacklines.append(l)
+    return CrateStack.from_lines(stacklines), move
+
+
 def one_star(filename: str):
     '''Returns the one star solution'''
 
