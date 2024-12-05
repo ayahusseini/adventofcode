@@ -6,11 +6,13 @@ from collections import namedtuple, defaultdict
 INPUT_FILE = "inputs/day_5_input.txt"
 TEST_FILE = "inputs/day_5_test_input.txt"
 
+MOVE_PATTERN = r'move (\w+) from (\w+) to (\w+)'
+STACK_PATTERN = r'\[(\w)\][ |\n]|(   )'
+
 Move = namedtuple("Move", ['amount', 'prev_stack', 'new_stack'])
 
 
 class CrateStack:
-    stack_pattern = r'\[(\w)\][ |\n]|(   )'
 
     def __init__(self, stacks_to_crates: dict):
         self.stacks = stacks_to_crates
@@ -26,10 +28,10 @@ class CrateStack:
         stacks = defaultdict(lambda: [])
         for l in lines[::-1]:
             if '[' in l:
-                level = re.findall(cls.stack_pattern, l)
+                level = re.findall(STACK_PATTERN, l)
                 for i, entry in enumerate(level):
                     if entry[0]:
-                        stacks[i].append(entry[0])
+                        stacks[i+1].append(entry[0])
         return cls(stacks)
 
 
@@ -41,14 +43,12 @@ def load_file(filename: str) -> tuple[CrateStack, list[Move]]:
         lines = f.readlines()
     parsing_moves = False
     for l in lines:
-        if not l:
-            parsing_moves = True
-            continue
-        if not parsing_moves:
-            moves.append(l)
+        if 'move' in l:
+            amount, prev, next = re.findall(MOVE_PATTERN, l)[0]
+            moves.append(Move(int(amount), int(prev), int(next)))
         else:
             stacklines.append(l)
-    return CrateStack.from_lines(stacklines), move
+    return CrateStack.from_lines(stacklines), moves
 
 
 def one_star(filename: str):
