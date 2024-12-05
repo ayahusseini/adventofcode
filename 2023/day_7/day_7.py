@@ -28,9 +28,6 @@ class Card:
     def __eq__(self, card2):
         return self.strength == card2.strength
 
-    def __repr__(self) -> str:
-        return f"{self.symbol}"
-
 
 class SpecialCard(Card):
     """A card within a special hand where Joker is the weakest symbol."""
@@ -116,13 +113,6 @@ class JokerHand(Hand):
 
     def __init__(self, cards: list[Card], bid: int):
         super().__init__(cards, bid)
-
-    @classmethod
-    def from_line(cls, line: str):
-        """Instantiates a hand from an input line"""
-        hand, bid = line.split(' ')
-        cards = [SpecialCard(l) for l in hand]
-        return cls(cards, int(bid))
 
     @staticmethod
     def frequency_pattern(cards) -> tuple:
