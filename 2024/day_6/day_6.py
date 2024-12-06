@@ -1,5 +1,3 @@
-'''Solution to advent of code day 6 2024
-'''
 import numpy as np
 INPUT_FILE = "inputs/day_6_input.txt"
 TEST_FILE = "inputs/day_6_test_input.txt"
@@ -12,63 +10,69 @@ class Grid:
         self.ncols = len(is_obstruction[0])
 
     def is_out_of_bounds(self, idx: tuple) -> bool:
-        return (not (0 <= idx[0] < self.nrows) or not (0 <= idx[1] < self.ncols))
+        return not (0 <= idx[0] < self.nrows and 0 <= idx[1] < self.ncols)
 
-    def is_obstacle(self, idx: tuple) -> bool:
-        return self.obstructions[idx[0], idx[1]]
+    def is_obstacle(self, idx: tuple, temporary_obstacles=set()) -> bool:
+        return self.obstructions[idx[0], idx[1]] or idx in temporary_obstacles
 
 
 class Guard:
-    _turns = {'^': '>',
-              '>': 'v',
-              '<': '^',
-              'v': '<'}
-
-    _orientations = {
-        '^': (-1, 0),
-        '>': (0, 1),
-        '<': (0, -1),
-        'v': (1, 0)
-    }
+    _turns = {'^': '>', '>': 'v', '<': '^', 'v': '<'}
+    _orientations = {'^': (-1, 0), '>': (0, 1), '<': (0, -1), 'v': (1, 0)}
 
     def __init__(self, grid: Grid, position: tuple, symbol: tuple):
         self.grid = grid
-        self.visited = np.zeros_like(self.grid.obstructions, dtype=int)
-
         self.r, self.c = position
-        self.visited[self.r, self.c] = True  # visit initial position
-
+        self.visited = {(self.r, self.c)}
         self.symbol = symbol
         self.dr, self.dc = Guard._orientations[symbol]
+        self.original_state = (self.symbol, self.r, self.c, self.dr, self.dc)
 
-    def turn(self) -> bool:
+    def reset(self):
+        self.symbol, self.r, self.c, self.dr, self.dc = self.original_state
+        self.visited.clear()
+        self.visited.add((self.r, self.c))
+
+    def turn(self):
         """Turn to the right by 90 degrees"""
         self.symbol = Guard._turns[self.symbol]
         self.dr, self.dc = Guard._orientations[self.symbol]
 
-    def walk(self) -> bool:
-        """Walk forward to the next obstacle or until leaving bounds. 
-        Returns True if still in bounds."""
+    def walk(self, temporary_obstacles=set()) -> int:
+        """Walk forward"""
         next_pos = (self.r + self.dr, self.c + self.dc)
         if self.grid.is_out_of_bounds(next_pos):
-            return False
+            return -1
 
-        if self.grid.is_obstacle(next_pos):
+        if self.grid.is_obstacle(next_pos, temporary_obstacles):
             self.turn()
-        else:
-            self.r, self.c = next_pos
-            self.visited[self.r, self.c] = True
-        return True
+            return 0
+
+        self.r, self.c = next_pos
+        self.visited.add((self.r, self.c))
+        return 1
 
     def simulate_walk_out_of_bounds(self) -> bool:
         """Keep walking until out of bounds"""
-        in_bounds = True
-        while in_bounds:
-            in_bounds = self.walk()
+        while True:
+            state = self.walk()
+            if state == -1:  # Out of bounds
+                return False
+
+    def detect_loop(self, temporary_obstacles=set()) -> bool:
+        seen_positions = set()  # A set to track visited states
+        pos = (self.r, self.c, self.symbol)
+        while True:
+            if pos in seen_positions:
+                return True  # Loop detected
+            seen_positions.add(pos)
+            if self.walk(temporary_obstacles) == -1:
+                return False  # Reached out of bounds, no loop
+            pos = (self.r, self.c, self.symbol)
 
     def count_distinct_positions(self) -> int:
         """Counts the number of distinct positions visited"""
-        return int(self.visited.sum())
+        return len(self.visited)
 
     @classmethod
     def from_lines(cls, lines: list[str]):
@@ -100,8 +104,22 @@ def one_star(filename: str):
 
 def two_star(filename: str):
     '''Returns the two star solution'''
+    guard = load_file(filename)
+    guard.simulate_walk_out_of_bounds()
 
-    return
+    # Instead of using np.argwhere, just iterate over visited positions
+    count = 0
+    visited_positions = guard.visited
+
+    newguard = load_file(filename)
+    for r, c in visited_positions:
+        newguard.grid.obstructions[r, c] = True
+        if newguard.detect_loop():
+            count += 1
+        newguard.grid.obstructions[r, c] = False
+        newguard.reset()
+
+    return count
 
 
 if __name__ == "__main__":
