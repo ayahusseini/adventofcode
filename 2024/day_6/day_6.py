@@ -107,7 +107,6 @@ def two_star(filename: str):
     guard = load_file(filename)
     guard.simulate_walk_out_of_bounds()
 
-    # Instead of using np.argwhere, just iterate over visited positions
     count = 0
     visited_positions = guard.visited
 

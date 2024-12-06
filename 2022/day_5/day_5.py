@@ -17,6 +17,10 @@ class CrateStack:
     def __init__(self, stacks_to_crates: dict):
         self.stacks = stacks_to_crates
 
+    def update_full_moves(self, moves: list[Move]):
+        for m in moves:
+            self.update(m)
+
     def update(self, move: Move):
         removed = self.stacks[move.prev_stack][-move.amount:]
         self.stacks[move.prev_stack] = self.stacks[move.prev_stack][:-move.amount]
@@ -53,8 +57,10 @@ def load_file(filename: str) -> tuple[CrateStack, list[Move]]:
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-
-    return
+    cratestack, moves = load_file(filename)
+    cratestack.update_full_moves(moves)
+    print(cratestack.stacks)
+    return ''.join([crates[-1] for stack, crates in cratestack.stacks.items()])
 
 
 def two_star(filename: str):
