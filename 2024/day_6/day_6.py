@@ -23,16 +23,21 @@ class Guard:
               '>': 'v',
               '<': '^',
               'v': '<'}
+
     _orientations = {
         '^': (-1, 0),
         '>': (0, 1),
-        '<': (0, 1),
+        '<': (0, -1),
         'v': (1, 0)
     }
 
     def __init__(self, grid: Grid, position: tuple, symbol: tuple):
         self.grid = grid
+        self.visited = np.zeros_like(self.grid.obstructions, dtype=int)
+
         self.r, self.c = position
+        self.visited[self.r, self.c] = True  # visit initial position
+
         self.symbol = symbol
         self.dr, self.dc = Guard._orientations[symbol]
 
@@ -41,20 +46,29 @@ class Guard:
         self.symbol = Guard._turns[self.symbol]
         self.dr, self.dc = Guard._orientations[self.symbol]
 
-    def move_guard(self) -> bool:
-        """Moves the guard and returns False if the guard is moved out of bounds."""
+    def walk(self) -> bool:
+        """Walk forward to the next obstacle or until leaving bounds. 
+        Returns True if still in bounds."""
         next_pos = (self.r + self.dr, self.c + self.dc)
-
         if self.grid.is_out_of_bounds(next_pos):
             return False
+
         if self.grid.is_obstacle(next_pos):
             self.turn()
         else:
             self.r, self.c = next_pos
+            self.visited[self.r, self.c] = True
         return True
 
-    def count_distinct_positions(self):
-        """"""
+    def simulate_walk_out_of_bounds(self) -> bool:
+        """Keep walking until out of bounds"""
+        in_bounds = True
+        while in_bounds:
+            in_bounds = self.walk()
+
+    def count_distinct_positions(self) -> int:
+        """Counts the number of distinct positions visited"""
+        return int(self.visited.sum())
 
     @classmethod
     def from_lines(cls, lines: list[str]):
@@ -69,7 +83,7 @@ class Guard:
                     return cls(grid, (r, c), o)
 
 
-def load_file(filename: str) -> list[list]:
+def load_file(filename: str) -> Guard:
     """Loads a file as a guard"""
     with open(filename, 'r') as f:
         lines = f.readlines()
@@ -79,8 +93,9 @@ def load_file(filename: str) -> list[list]:
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-
-    return
+    guard = load_file(filename)
+    guard.simulate_walk_out_of_bounds()
+    return guard.count_distinct_positions()
 
 
 def two_star(filename: str):
