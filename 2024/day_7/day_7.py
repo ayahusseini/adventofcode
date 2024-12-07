@@ -34,14 +34,12 @@ def search(nums, target_total, include_concatenate: bool = False) -> bool:
         if next_idx >= len(nums):
             continue
 
-        next_num = nums[next_idx]
-        next_sum = current_total + next_num
-        next_prod = current_total * next_num
+        next_sum = current_total + nums[next_idx]
+        next_prod = current_total * nums[next_idx]
         possibilities = [next_sum, next_prod]
 
         if include_concatenate:
-            concat_num = concatenate(current_total, next_num)
-            possibilities.append(concat_num)
+            possibilities.append(concatenate(current_total, nums[next_idx]))
 
         for n in possibilities:
             if (next_idx == len(nums) - 1) and n == target_total:
