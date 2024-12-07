@@ -53,11 +53,8 @@ def search(nums, target_total, include_concatenate: bool = False) -> bool:
 def get_total_callibration_result(input_file: str, allow_concatenate: bool):
     tot = 0
     for target, expression in load_file(input_file):
-        if search(expression, target, False):
+        if search(expression, target, allow_concatenate):
             tot += target
-        elif allow_concatenate:
-            if search(expression, target, True):
-                tot += target
 
     return tot
 
