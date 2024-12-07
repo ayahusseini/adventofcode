@@ -17,7 +17,12 @@ def load_file(filename: str):
         yield int(target), [int(n) for n in nums_text.split(' ') if n]
 
 
-def search(nums, target_total) -> bool:
+def concatenate(num1: int, num2: int) -> int:
+    """Concatenates two numbers"""
+    return int(f"{num1}{num2}")
+
+
+def search(nums, target_total, include_concatenate: bool = False) -> bool:
     """Searches for a target"""
     stack = [(nums[0], 0)]
 
@@ -29,35 +34,50 @@ def search(nums, target_total) -> bool:
         if next_idx >= len(nums):
             continue
 
-        next_sum = nums[next_idx] + current_total
-        next_prod = nums[next_idx] * current_total
+        next_num = nums[next_idx]
+        next_sum = current_total + next_num
+        next_prod = current_total * next_num
+        possibilities = [next_sum, next_prod]
 
-        for n in (next_sum, next_prod):
-            if n < target_total:
-                stack.append((n, next_idx))
-            elif n == target_total:
+        if include_concatenate:
+            concat_num = concatenate(current_total, next_num)
+            possibilities.append(concat_num)
+
+        for n in possibilities:
+            if (next_idx == len(nums) - 1) and n == target_total:
                 return True
+            elif n <= target_total:
+                stack.append((n, next_idx))
+
     return False
+
+
+def get_total_callibration_result(input_file: str, allow_concatenate: bool):
+    tot = 0
+    for target, expression in load_file(input_file):
+        if search(expression, target, False):
+            tot += target
+        elif allow_concatenate:
+            if search(expression, target, True):
+                tot += target
+
+    return tot
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    tot = 0
-    for target, expression in load_file(filename):
-        if search(expression, target):
-            tot += target
 
-    return tot
+    return get_total_callibration_result(filename, False)
 
 
 def two_star(filename: str):
     '''Returns the two star solution'''
 
-    return
+    return get_total_callibration_result(filename, True)
 
 
 if __name__ == "__main__":
-    print(f"One star solution is {one_star(TEST_FILE)}")
-    print(f"Two star solution is {two_star(TEST_FILE)}")
+    print(f"One star test solution is {one_star(TEST_FILE)}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")
