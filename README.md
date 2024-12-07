@@ -11,7 +11,7 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |2022|4     |
 |2023|14    |
 |2024|14|
-|**Total**|**89** ⭐ |
+|**Total**|**91** ⭐ |
 
 ## Setup 
 
