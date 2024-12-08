@@ -1,19 +1,75 @@
 import numpy as np
+from collections import defaultdict
 INPUT_FILE = "inputs/day_6_input.txt"
 TEST_FILE = "inputs/day_6_test_input.txt"
 
 
+def load_file(filename: str) -> Guard:
+    """Loads a file as a guard"""
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
+    obstructions = defaultdict(lambda: [])
+    obstructionsT = defaultdict(lambda: [])
+
+    for row, l in enumerate(lines):
+        l = l.replace('\n', '')
+        for col, char in enumerate(l):
+            if char == '#':
+                obstructions[row].append(col)
+                obstructionsT[col].append(row)
+            elif char in ('>', '<', '^', 'v'):
+                initial_position = row, col
+                symbol = char
+
+    return Grid(obstructions, obstructionsT, len(lines), len(lines[0].replace('\n', '')))
+
+
 class Grid:
-    def __init__(self, is_obstruction: np.ndarray):
-        self.obstructions = is_obstruction
-        self.nrows = len(is_obstruction)
-        self.ncols = len(is_obstruction[0])
+    def __init__(self, obstructions: dict, obstructions_T: dict, nrows: int, ncols: int):
+        """Instantiates a grid."""
+        self.obstructions_row = obstructions
+        self.obstructions_col = obstructions_T
+        self.nearest = defaultdict(lambda: dict())
+
+        self.temporary_obstructions = set()
+        self.nrows = nrows
+        self.ncols = ncols
+
+    def get_nearest_obstruction(self, idx: tuple, direction: tuple) -> list:
+        """Returns the nearest obstructions for the up, down, left, right orientations"""
+
+        if self.nearest[idx].get(direction) is not None:
+            return self.nearest[idx][direction]
+        r, c = idx
+        up, left = direction
+        if up == 0:
+            nearest_col = min(
+                self.obstructions_row[r], key=lambda x: left * (c - x))
+
+            self.nearest[idx][direction] = r, nearest_col
+            return r, nearest_col
+        elif left == 0:
+            nearest_row = min(
+                self.obstructions_col[c], key=lambda x: up * (r - x))
+            self.nearest[idx][direction] = nearest_row, c
+            return nearest_row, c
+
+    def reset(self):
+        """Resets any temporary obstructions."""
+        self.temporary_obstrcutions.clear()
+
+    def add_temporary_obstruction(self, idx: tuple):
+        """Adds a temporary obstruction."""
+        self.temporary_obstructions.add(idx)
 
     def is_out_of_bounds(self, idx: tuple) -> bool:
+        """Whether or not an index is out of bounds."""
         return not (0 <= idx[0] < self.nrows and 0 <= idx[1] < self.ncols)
 
-    def is_obstacle(self, idx: tuple, temporary_obstacles=set()) -> bool:
-        return self.obstructions[idx[0], idx[1]] or idx in temporary_obstacles
+    def is_obstacle(self, idx: tuple) -> bool:
+        """Whether or not an index contains an obstacle."""
+        return idx in self.temporary_obstructions or idx[1] in self.obstructions[idx[0]]
 
 
 class Guard:
@@ -21,26 +77,32 @@ class Guard:
     _orientations = {'^': (-1, 0), '>': (0, 1), '<': (0, -1), 'v': (1, 0)}
 
     def __init__(self, grid: Grid, position: tuple, symbol: tuple):
+        """Instantiates a guard"""
         self.grid = grid
-        self.r, self.c = position
-        self.visited = {(self.r, self.c)}
+        self.pos = position
+        self.visited = {(position)}
+
         self.symbol = symbol
-        self.dr, self.dc = Guard._orientations[symbol]
-        self.original_state = (self.symbol, self.r, self.c, self.dr, self.dc)
+        self.original_state = (self.symbol, self.pos)
 
     def reset(self):
-        self.symbol, self.r, self.c, self.dr, self.dc = self.original_state
+        """Reset the guard state"""
+        self.symbol, self.pos = self.original_state
+
         self.visited.clear()
-        self.visited.add((self.r, self.c))
+        self.visited.add((self.pos))
 
     def turn(self):
         """Turn to the right by 90 degrees"""
         self.symbol = Guard._turns[self.symbol]
-        self.dr, self.dc = Guard._orientations[self.symbol]
 
     def walk(self, temporary_obstacles=set()) -> int:
-        """Walk forward"""
-        next_pos = (self.r + self.dr, self.c + self.dc)
+        """Walk forward until you reach the nearest obstacle, returning the number of steps taken
+        (or -1 if stepping out of bounds)."""
+
+        direction = Guard._orientations[self.symbol]
+        next_pos = (self.pos[0] + direction[0], self.pos[1] + direction[1])
+
         if self.grid.is_out_of_bounds(next_pos):
             return -1
 
@@ -48,8 +110,9 @@ class Guard:
             self.turn()
             return 0
 
-        self.r, self.c = next_pos
-        self.visited.add((self.r, self.c))
+        nearest_obstacle = self.grid.get_nearest_obstruction(
+            self.pos, direction)
+        newly_visited = ()
         return 1
 
     def simulate_walk_out_of_bounds(self) -> bool:
@@ -73,26 +136,6 @@ class Guard:
     def count_distinct_positions(self) -> int:
         """Counts the number of distinct positions visited"""
         return len(self.visited)
-
-    @classmethod
-    def from_lines(cls, lines: list[str]):
-        obstructions = np.array(
-            [[char == '#' for char in line.replace('\n', '')] for line in lines])
-        grid = Grid(obstructions)
-
-        for r, row in enumerate(lines):
-            for o in cls._orientations.keys():
-                c = row.find(o)
-                if c > -1:
-                    return cls(grid, (r, c), o)
-
-
-def load_file(filename: str) -> Guard:
-    """Loads a file as a guard"""
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-
-    return Guard.from_lines(lines)
 
 
 def one_star(filename: str):
