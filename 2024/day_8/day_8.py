@@ -11,7 +11,7 @@ def multiply(scalar: int, vector: tuple, ) -> tuple:
 
 
 def subtract_vector(n1: tuple, n2: tuple) -> tuple:
-    return (n2[0]-n1[0], n2[1]-n1[1])
+    return (n1[0]-n2[0], n1[1]-n2[1])
 
 
 def get_antinode_positions(pos1: tuple, pos2: tuple) -> tuple[tuple, tuple]:
