@@ -25,32 +25,54 @@ def is_in_bounds(position: tuple, numrows: int, numcols: int) -> bool:
     return (0 <= position[0] < numrows) and (0 <= position[1] < numcols)
 
 
+def get_all_pairs(full_list: list, memo: dict = dict()) -> list:
+    numitems = len(full_list)
+    if memo.get(numitems) is not None:
+        return [(full_list[i], full_list[j]) for i, j in memo[numitems]]
+    memo[numitems] = []
+    all_pairs = []
+
+    for i in range(numitems):
+        for j in range(i + 1, numitems):
+            memo[numitems].append((i, j))
+            all_pairs.append((full_list[i], full_list[j]))
+    return all_pairs
+
+
 def get_antinodes(antennas: list[tuple], nrows: int, ncols: int):
     """Generates antinodes given a list of antennas with the same symbol"""
+    antinodes = []
+    for pair in get_all_pairs(antennas):
+        positions = get_antinode_positions(*pair)
+        for pos in positions:
+            if is_in_bounds(pos, nrows, ncols):
+                antinodes += [pos]
+    return antinodes
 
-    for i, antennna in antennas
-    positions = get_antinode_positions(n1.pos, n2.pos)
 
-    for pos in positions:
-        if is_in_bounds(pos, nrows, ncols):
-            yield Node(symbol='#', pos=pos)
-
-
-def load_file(filename) -> dict[Node]:
+def load_file(filename) -> tuple[dict[list], int, int]:
     """Loads the file"""
-    frequencies = defa
+    frequencies = defaultdict(lambda: [])
     with open(filename, 'r') as f:
         lines = f.readlines()
-    return lines
 
-
-def calculate_antinodes(filename)
+    nrows = len(lines)
+    ncols = len(lines[0].replace('\n', ''))
+    for r, l in enumerate(lines):
+        l = l.replace('\n', '')
+        for c, char in enumerate(l):
+            if char != '.':
+                frequencies[char].append((r, c))
+    return frequencies, nrows, ncols
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    guard = load_file(filename)
-    return
+    antennas, nrows, ncols = load_file(filename)
+    antinodes = set()
+    for _, positions in antennas.items():
+        antinodes.update(get_antinodes(positions, nrows, ncols))
+    return len(antinodes)
 
 
 def two_star(filename: str):
