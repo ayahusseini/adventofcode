@@ -1,4 +1,5 @@
-"""Solution for advent of code day 6 2024"""
+
+import numpy as np
 from collections import defaultdict
 INPUT_FILE = "inputs/day_6_input.txt"
 TEST_FILE = "inputs/day_6_test_input.txt"
