@@ -39,15 +39,41 @@ def get_all_pairs(full_list: list, memo: dict = dict()) -> list:
     return all_pairs
 
 
-def get_antinodes(antennas: list[tuple], nrows: int, ncols: int):
+def get_antinodes(antennas: list[tuple], nrows: int, ncols: int, is_harmonic: bool = False):
     """Generates antinodes given a list of antennas with the same symbol"""
     antinodes = []
     for pair in get_all_pairs(antennas):
-        positions = get_antinode_positions(*pair)
-        for pos in positions:
-            if is_in_bounds(pos, nrows, ncols):
+
+        if is_harmonic:
+            for pos in generate_harmonic_positions(*pair, nrows, ncols):
                 antinodes += [pos]
+        else:
+            antinodes += [pos for pos in get_antinode_positions(
+                *pair) if is_in_bounds(pos, nrows, ncols)]
+
     return antinodes
+
+
+def generate_harmonic_positions(pos1: tuple, pos2: tuple, nrows: int, ncols: int):
+    """Generates the harmonic positions of the antinodes"""
+    displacement = subtract_vector(pos2, pos1)
+    is_left, is_right = True, True
+    n = 0
+    while is_left or is_right:
+        if is_left:
+            left = subtract_vector(pos1, multiply(n, displacement))
+        if is_right:
+            right = subtract_vector(
+                pos2, multiply(-1*n, displacement))
+        if is_in_bounds(left, nrows, ncols):
+            yield left
+        else:
+            is_left = False
+        if is_in_bounds(right, nrows, ncols):
+            yield right
+        else:
+            is_right = False
+        n += 1
 
 
 def load_file(filename) -> tuple[dict[list], int, int]:
@@ -77,7 +103,12 @@ def one_star(filename: str):
 
 def two_star(filename: str):
     '''Returns the two star solution'''
-    return
+    antennas, nrows, ncols = load_file(filename)
+    antinodes = set()
+    for _, positions in antennas.items():
+        antinodes.update(get_antinodes(
+            positions, nrows, ncols, is_harmonic=True))
+    return len(antinodes)
 
 
 if __name__ == "__main__":
