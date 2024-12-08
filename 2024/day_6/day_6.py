@@ -15,7 +15,7 @@ class Grid:
     def reset(self):
         """Resets any temporary obstructions."""
         for o in self.temporary_obstructions:
-            self.obstructions_row[o[0]].pop()
+            self.obstructions_row[o[0]].remove(o[1])
         self.temporary_obstructions.clear()
 
     def add_temporary_obstruction(self, idx: tuple):
@@ -39,33 +39,24 @@ class Guard:
     def __init__(self, grid: Grid, position: tuple, symbol: tuple):
         """Instantiates a guard"""
         self.grid = grid
-        self.pos = position
-        self.visited = {(position)}
-        self.symbol = symbol
-        self.original_state = (self.symbol, self.pos)
-
-    def reset(self):
-        """Reset the guard state"""
-        self.symbol, self.pos = self.original_state
-        self.visited = {self.pos}
+        self.path = [(position, symbol)]
 
     def turn(self):
         """Turn to the right by 90 degrees"""
-        self.symbol = Guard._turns[self.symbol]
+        self.path.append((self.path[-1][0], Guard._turns[self.path[-1][1]]))
 
     def walk(self) -> int:
-        """Walk forward until you reach the nearest obstacle, returning the number of steps taken
-        (or -1 if stepping out of bounds)."""
-        d = Guard._orientations[self.symbol]
-        next_pos = (self.pos[0] + d[0], self.pos[1] + d[1])
+        """Walk forward, returning the number of steps taken (or -1 if stepping out of bounds)."""
+        pos, symbol = self.path[-1]
+        d = Guard._orientations[symbol]
+        next_pos = (pos[0] + d[0], pos[1] + d[1])
 
         if self.grid.is_out_of_bounds(next_pos):
             return -1
         if self.grid.is_obstacle(next_pos):
             self.turn()
             return 0
-        self.pos = next_pos
-        self.visited.add(self.pos)
+        self.path.append((next_pos, symbol))
         return 1
 
     def simulate_walk_out_of_bounds(self) -> bool:
@@ -75,23 +66,19 @@ class Guard:
             steps = self.walk()
 
     def detect_loop(self) -> bool:
-        """Return True if a loop is detected"""
-        seen_positions = set()
-        pos_state = (self.pos, self.symbol)
+        """Return True if a loop is detected."""
+        visited = set()
         while True:
-            if pos_state in seen_positions:
+            current_state = self.path[-1]
+            if current_state in visited:
                 return True
-
-            seen_positions.add(pos_state)
-
+            visited.add(current_state)
             if self.walk() == -1:
                 return False
 
-            pos_state = (self.pos, self.symbol)
-
     def count_distinct_positions(self) -> int:
         """Counts the number of distinct positions visited"""
-        return len(self.visited)
+        return len(set([pos for pos, _ in self.path]))
 
 
 def load_file(filename: str) -> Guard:
@@ -126,12 +113,12 @@ def two_star(filename: str):
     '''Returns the two star solution'''
     guard = load_file(filename)
     guard.simulate_walk_out_of_bounds()
+    original_positions = set([pos for pos, _ in guard.path[1:]])
     count = 0
-    visited_positions = list(guard.visited)
-    for r, c in visited_positions:
-        guard.reset()
+    for pos in list(original_positions):
         guard.grid.reset()
-        guard.grid.add_temporary_obstruction((r, c))
+        guard.path = [guard.path[0]]
+        guard.grid.add_temporary_obstruction(pos)
         if guard.detect_loop():
             count += 1
     return count
