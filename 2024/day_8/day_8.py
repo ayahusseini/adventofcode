@@ -1,6 +1,28 @@
 """Solution for advent of code day 8 2024"""
+from collections import namedtuple
 INPUT_FILE = "inputs/day_8_input.txt"
 TEST_FILE = "inputs/day_8_test_input.txt"
+
+Node = namedtuple("node", ("symbol", "pos"))
+
+
+def multiply(scalar: int, vector: tuple, ) -> tuple:
+    return (vector[0] * scalar, vector[1] * scalar)
+
+
+def subtract_vector(n1: tuple, n2: tuple) -> tuple:
+    return (n2[0]-n1[0], n2[1]-n1[1])
+
+
+def get_antinode_positions(pos1: tuple, pos2: tuple) -> tuple[tuple, tuple]:
+    """Returns a pair of antinode positions"""
+    return subtract_vector(multiply(2, pos1), pos2), subtract_vector(multiply(2, pos2), pos1)
+
+
+def get_antinodes(n1: Node, n2: Node) -> tuple[Node, Node]:
+    """Generates a pair of antinodes"""
+    if not n1.symbol == n2.symbol:
+        raise ValueError("They must have the same symbol.")
 
 
 def load_file(filename) -> list[str]:
