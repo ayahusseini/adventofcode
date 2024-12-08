@@ -4,6 +4,15 @@ INPUT_FILE = "inputs/day_8_input.txt"
 TEST_FILE = "inputs/day_8_test_input.txt"
 
 
+def get_next_step(steps: str):
+    i = 0
+    while True:
+        yield steps[i]
+        i += 1
+        if i == len(steps):
+            i = 0
+
+
 def load_file(filename: str) -> list[str]:
     '''Loads the file as a list of strings'''
 
