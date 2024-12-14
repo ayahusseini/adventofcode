@@ -18,6 +18,7 @@ class Files:
 
     def get_first_index(self) -> dict:
         """Maps a file id to the first index it appears in."""
+
         first_idx = dict()
         for idx, file_id in sorted(self.disk.items(), key=lambda x: x[0], reverse=False):
             if file_id in first_idx:
@@ -83,23 +84,44 @@ class Files:
                 l += 1
                 r -= 1
 
+    def leftmost_gap(self, ridx: int, minsize: int):
+        """Finds consecutive gap indeces to the left of ridx"""
+
+        g_start = 0
+        g_end = 0
+
+        while g_start < ridx:
+            if g_start in self.disk.keys():
+                g_start += 1
+                g_end = g_start
+                continue
+
+            while g_end not in self.disk.keys() and g_end < ridx:
+
+                if (g_end - g_start) + 1 >= minsize:
+                    yield range(g_start, g_end + 1)
+
+                g_end += 1
+
+            g_start += 1
+            g_end = g_start
+
     def fill_files(self) -> None:
         """Moves the files in batches from right to left in order of decreasing file id."""
 
         quantities = self.get_file_quantities()
         first_idx = self.get_first_index()
 
-        for file_id in range(max(self.disk.values()), -1, -1):
+        file_id = max(self.disk.values())
 
-            if g in self.disk.keys():
-                g += 1
+        while file_id >= 0:
 
-            else:
-                g_end = g + 1
-                while g_end in self.disk.keys():
-                    g_end += 1
+            filesize = quantities[file_id]
+            fileidx = first_idx[file_id]
+            file_blocks = range(fileidx, fileidx + filesize)
+            moved = False
 
-                g = g_end
+            file_id -= 1
 
     def checksum(self) -> int:
         """Returns the checksum."""
@@ -132,12 +154,13 @@ def one_star(filename: str):
 def two_star(filename: str):
     '''Returns the two star solution'''
     files = Files.from_line(load_file(filename))
+    files.fill_files()
 
     return files.checksum()
 
 
 if __name__ == "__main__":
     print(f"One star test solution is {one_star(TEST_FILE)}")
-    # print(f"Two star test solution is {two_star(TEST_FILE)}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     # print(f"Two star solution is {two_star(INPUT_FILE)}")

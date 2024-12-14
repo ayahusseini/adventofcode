@@ -22,6 +22,17 @@ def test_files_first_idx(files):
     assert d[1] == 5
 
 
+def test_leftmost_gap(files):
+    gaps = files.leftmost_gap(ridx=11, minsize=3)
+    assert next(gaps) == range(2, 5)
+    assert next(gaps) == range(8, 11)
+
+
+def test_leftmost_gap_smaller(files):
+    gaps = files.leftmost_gap(ridx=11, minsize=2)
+    assert next(gaps) == range(2, 4)
+
+
 def test_files_text(files):
     assert str(files) == "00...111...2...333.44.5555.6666.777.888899"
 
