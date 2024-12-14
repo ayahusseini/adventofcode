@@ -8,14 +8,25 @@ def files():
 
 
 def test_files_text(files):
-    assert files.disk_space == "00...111...2...333.44.5555.6666.777.888899"
+    assert str(files) == "00...111...2...333.44.5555.6666.777.888899"
 
 
 def test_checksum():
-    files = Files("0099811188827773336446555566..............")
-    assert files.checksum() == 1928
+    disk = {}
+    for idx, char in enumerate("00992111777.44.333....5555.6666.....8888.."):
+        if char != '.':
+            disk[idx] = int(char)
 
-
-def test_checksum_2():
-    files = Files("00992111777.44.333....5555.6666.....8888..")
+    files = Files(disk)
     assert files.checksum() == 2858
+
+
+def test_checksum_2(files):
+    disk = {}
+    for idx, char in enumerate("0099811188827773336446555566.............."):
+        if char != '.':
+            disk[idx] = int(char)
+
+    files = Files(disk)
+
+    assert files.checksum() == 1928

@@ -4,28 +4,44 @@ TEST_FILE = "inputs/day_9_test_input.txt"
 
 
 class Files:
-    def __init__(self, disk_space: str):
+    def __init__(self, disk_space: dict):
         """Instantiates a file."""
-        self.disk_space = disk_space
+        self.disk = disk_space
 
     @classmethod
     def from_line(cls, line: str):
-        """Instantiates the files from a line of text"""
-        disk = ""
-        for num, i in enumerate(range(0, len(line), 2)):
-            batch = line[i:i+2]
-            disk += f"{str(num) * int(batch[0])}"
+        """Instantiates the files from a line of text."""
+        disk = dict()
+        write_to = 0
 
-            if len(batch) == 2:
-                disk += "." * int(batch[1])
+        for id, i in enumerate(range(0, len(line), 2)):
+            batch = line[i:i+2]
+            batch = batch + "0" if len(batch) < 2 else batch
+
+            num_blocks = int(batch[0])
+            gap = int(batch[1])
+
+            for pointer in range(write_to, write_to + num_blocks):
+                disk[pointer] = id
+
+            write_to += num_blocks + gap
+
         return cls(disk)
 
-    def checksum(self):
-        """Returns the checksum."""
-        return sum([idx * int(id) for idx, id in enumerate(self.disk_space) if id.isdigit()])
+    def swap(self, l_idx: int, r_idx: int) -> None:
+        """Swaps two characters."""
+        self.disk[l_idx], self.disk[r_idx] = self.disk[r_idx], self.disk[l_idx]
 
-    def __repr__(self):
-        return self.disk_space
+    def checksum(self) -> int:
+        """Returns the checksum."""
+        return sum([idx * int(id) for idx, id in self.disk.items()])
+
+    def __str__(self) -> str:
+        """String representation."""
+        text = ["." for _ in range(max(self.disk.keys()) + 1)]
+        for idx, file_id in self.disk.items():
+            text[idx] = str(file_id)
+        return "".join(text)
 
 
 def load_file(filename: str) -> str:
