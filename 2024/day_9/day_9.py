@@ -118,8 +118,13 @@ class Files:
 
             filesize = quantities[file_id]
             fileidx = first_idx[file_id]
-            file_blocks = range(fileidx, fileidx + filesize)
-            moved = False
+            gap = next(self.leftmost_gap(fileidx, filesize), None)
+
+            if gap is None:
+                file_id -= 1
+                continue
+            for gidx, fidx in zip(gap, range(fileidx, fileidx + filesize)):
+                self.swap(gidx, fidx)
 
             file_id -= 1
 
@@ -163,4 +168,4 @@ if __name__ == "__main__":
     print(f"One star test solution is {one_star(TEST_FILE)}")
     print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
-    # print(f"Two star solution is {two_star(INPUT_FILE)}")
+    print(f"Two star solution is {two_star(INPUT_FILE)}")
