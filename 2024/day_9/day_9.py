@@ -5,13 +5,32 @@ TEST_FILE = "inputs/day_9_test_input.txt"
 
 class Files:
     def __init__(self, disk_space: dict):
-        """Instantiates a file."""
+        """Instantiates a list of files."""
+
         self.disk = disk_space
+        self.num_filled = len(disk_space)
+
+    def get_file_quantities(self) -> dict:
+        """Maps a file id to the number of blocks it occupies."""
+
+        return {f: list(self.disk.values()).count(f)
+                for f in set(self.disk.values())}
+
+    def get_first_index(self) -> dict:
+        """Maps a file id to the first index it appears in."""
+        first_idx = dict()
+        for idx, file_id in sorted(self.disk.items(), key=lambda x: x[0], reverse=False):
+            if file_id in first_idx:
+                continue
+            first_idx[file_id] = idx
+        return first_idx
 
     @classmethod
     def from_line(cls, line: str):
         """Instantiates the files from a line of text."""
+
         disk = dict()
+
         write_to = 0
 
         for id, i in enumerate(range(0, len(line), 2)):
@@ -29,8 +48,58 @@ class Files:
         return cls(disk)
 
     def swap(self, l_idx: int, r_idx: int) -> None:
-        """Swaps two characters."""
-        self.disk[l_idx], self.disk[r_idx] = self.disk[r_idx], self.disk[l_idx]
+        """Swaps two disk items."""
+
+        if l_idx in self.disk.keys() and r_idx in self.disk.keys():
+            self.disk[l_idx], self.disk[r_idx] = self.disk[r_idx], self.disk[l_idx]
+
+        elif r_idx in self.disk.keys():
+            self.disk[l_idx] = self.disk[r_idx]
+            del self.disk[r_idx]
+
+        elif l_idx in self.disk.keys():
+            self.disk[r_idx] = self.disk[l_idx]
+            del self.disk[l_idx]
+
+    def count_gaps(self) -> int:
+        """Counts the number of gaps."""
+
+        return max(self.disk.keys()) - self.num_filled + 1
+
+    def fill_blocks(self) -> None:
+        """Moves the blocks from right to left such that there are no more gaps."""
+
+        l = 0
+        r = max(self.disk.keys())
+
+        while (l <= r):
+
+            if l in self.disk.keys():
+                l += 1
+            elif r not in self.disk.keys():
+                r -= 1
+            else:
+                self.swap(l, r)
+                l += 1
+                r -= 1
+
+    def fill_files(self) -> None:
+        """Moves the files in batches from right to left in order of decreasing file id."""
+
+        quantities = self.get_file_quantities()
+        first_idx = self.get_first_index()
+
+        for file_id in range(max(self.disk.values()), -1, -1):
+
+            if g in self.disk.keys():
+                g += 1
+
+            else:
+                g_end = g + 1
+                while g_end in self.disk.keys():
+                    g_end += 1
+
+                g = g_end
 
     def checksum(self) -> int:
         """Returns the checksum."""
@@ -55,7 +124,7 @@ def one_star(filename: str):
     """Returns the one star solition"""
     files = Files.from_line(load_file(filename))
 
-    files.move_rightmost_blocks()
+    files.fill_blocks()
 
     return files.checksum()
 
@@ -64,13 +133,11 @@ def two_star(filename: str):
     '''Returns the two star solution'''
     files = Files.from_line(load_file(filename))
 
-    files.move_rightmost_files()
-
     return files.checksum()
 
 
 if __name__ == "__main__":
     print(f"One star test solution is {one_star(TEST_FILE)}")
-    print(f"Two star test solution is {two_star(TEST_FILE)}")
+    # print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     # print(f"Two star solution is {two_star(INPUT_FILE)}")
