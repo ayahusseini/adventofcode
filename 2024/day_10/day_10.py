@@ -12,17 +12,52 @@ class Grid:
         self.heights = heights
         self.trailheads = trailheads
 
-    def get_neighbours(self, idx: tuple, memo: dict = dict()) -> set:
-        """Returns the set of neighbours to an index as a dictionary of heights"""
-        if idx in memo:
-            return memo[idx]
+        self.neighbours = dict()
 
-        memo[idx] = set()
+    def get_neighbours(self, idx: tuple) -> set:
+        """Returns the set of neighbours to an index as a dictionary of heights"""
+        if idx in self.neighbours:
+            return self.neighbours[idx]
+
+        self.neighbours[idx] = set()
         for dr, dc in Grid.directions:
             if (idx[0] + dr, idx[1] + dc) in self.heights:
-                memo[idx].add((idx[0] + dr, idx[1] + dc))
+                self.neighbours[idx].add((idx[0] + dr, idx[1] + dc))
 
-        return memo[idx]
+        return self.neighbours[idx]
+
+    def get_paths(self) -> dict[tuple, list[list]]:
+        """Returns a dictionary mapping each trailhead to a list of paths"""
+        queue = [[idx] for idx in self.trailheads]
+        found = {idx: [] for idx in self.trailheads}
+
+        while queue:
+            current_path = queue.pop(0)
+
+            last_idx = current_path[-1]
+
+            if self.heights[last_idx] == 9:
+
+                found[current_path[0]].append(current_path)
+                continue
+
+            for neighbour in self.get_neighbours(last_idx):
+                if self.heights[neighbour] - self.heights[last_idx] == 1:
+
+                    new_path = current_path + [neighbour]
+                    if current_path[0] == (0, 2):
+                        print(new_path)
+                    queue.append(new_path)
+
+        return found
+
+    def get_trailhead_scores(self) -> dict[tuple, int]:
+        """Returns a map of trailheads to their scores"""
+        scores = dict()
+        paths = self.get_paths()
+        for start_idx, path_list in paths.items():
+            scores[start_idx] = len(set([p[-1] for p in path_list]))
+        return scores
 
     @classmethod
     def from_lines(cls, lines: list[str]):
