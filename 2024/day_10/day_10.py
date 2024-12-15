@@ -45,8 +45,6 @@ class Grid:
                 if self.heights[neighbour] - self.heights[last_idx] == 1:
 
                     new_path = current_path + [neighbour]
-                    if current_path[0] == (0, 2):
-                        print(new_path)
                     queue.append(new_path)
 
         return found
@@ -67,6 +65,7 @@ class Grid:
         height_map = dict()
         trailheads_indeces = set()
         for row, l in enumerate(lines):
+
             for col, height in enumerate(l.strip()):
                 height = int(height)
                 height_map[(row, col)] = height
@@ -82,14 +81,15 @@ def load_file(filename: str) -> Grid:
     with open(filename, "r") as f:
         lines = f.readlines()
 
-    return
+    return Grid.from_lines(lines)
 
 
 def one_star(filename: str):
     '''Returns the one star solution'''
-    lines = load_file(filename)
 
-    return
+    grid = load_file(filename)
+    scores = grid.get_trailhead_scores()
+    return sum(scores.values())
 
 
 def two_star(filename: str):
