@@ -9,9 +9,9 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |2015|30|
 |2021|29|
 |2022|4|
-|2023|14|
-|2024|16|
-|**Total**|**93** ⭐ |
+|2023|15|
+|2024|20|
+|**Total**|**98** ⭐ |
 
 ## Setup 
 

@@ -5,8 +5,8 @@ INPUT_FILE = "inputs/day_10_input.txt"
 TEST_FILE = "inputs/day_10_test_input.txt"
 
 
-def load_file(filename: str) -> list[int]:
-    '''Loads the file as a list of integers'''
+def load_file(filename: str) -> list[str]:
+    '''Loads the file as a list of strings'''
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -28,7 +28,7 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-    print(f"One star solution is {one_star(TEST_FILE)}")
-    print(f"Two star solution is {two_star(TEST_FILE)}")
+    print(f"One star test solution is {one_star(TEST_FILE)}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")
