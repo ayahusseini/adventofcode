@@ -57,6 +57,14 @@ class Grid:
             scores[start_idx] = len(set([p[-1] for p in path_list]))
         return scores
 
+    def get_trailhead_ratings(self) -> dict[tuple, int]:
+        """Returns a map of trailheads to their ratings"""
+        scores = dict()
+        paths = self.get_paths()
+        for start_idx, path_list in paths.items():
+            scores[start_idx] = len(path_list)
+        return scores
+
     @classmethod
     def from_lines(cls, lines: list[str]):
         """Converts a set of lines to a dictionary and a set of trailhead indeces.
@@ -95,7 +103,9 @@ def one_star(filename: str):
 def two_star(filename: str):
     '''Returns the two star solution'''
 
-    return
+    grid = load_file(filename)
+    ratings = grid.get_trailhead_ratings()
+    return sum(ratings.values())
 
 
 if __name__ == "__main__":
