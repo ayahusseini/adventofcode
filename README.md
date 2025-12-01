@@ -17,14 +17,14 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 
 ### Using UV (Recommended)
 
-[UV](https://github.com/astral-sh/uv) is a fast Python package installer and resolver. To use UV:
+[UV](https://github.com/astral-sh/uv) is a fast Python package installer and resolver. It automatically creates and manages a virtual environment for you. To use UV:
 
-1. Install UV: `curl -LsSf https://astral.sh/uv/install.sh | sh` (or see [installation instructions](https://github.com/astral-sh/uv#installation))
-2. Install dependencies: `uv sync`
-3. Run code: `uv run python3 day_x.py` (or `cd` into the directory first)
-4. Run tests: `uv run pytest -vv` (or `cd` into the directory first)
+0. If you haven't, install UV: `curl -LsSf https://astral.sh/uv/install.sh | sh` (or see [installation instructions](https://github.com/astral-sh/uv#installation))
+1. Install dependencies: `uv sync`
+2. `cd` into the correct folder `cd YYYY/day_x/`
+3. Run code: `uv run python3 day_x.py` 
+4. Run tests: `uv run pytest -vv` 
 
-UV automatically manages the virtual environment for you - no need to manually create or activate one!
 
 ### Using pip/venv (Alternative)
 
