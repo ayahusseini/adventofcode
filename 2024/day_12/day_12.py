@@ -1,6 +1,6 @@
 '''Solution to advent of code day 12 2024
 '''
-from collections import defaultdict
+
 INPUT_FILE = "inputs/day_12_input.txt"
 TEST_FILE = "inputs/day_12_test_input.txt"
 DIRECTIONS = [1j, -1j, 1, -1]
@@ -64,7 +64,6 @@ def dfs(start_idx, all_positions: dict, visited: set) -> tuple[int, int, int]:
 
 def find_all_regions(positions: dict) -> list[tuple[str, int, int]]:
     """Returns a list containing the letter, area and perimeter of all the regions"""
-
     if 0 not in positions:
         raise ValueError("Starting position (0, 0) not in positions")
 
