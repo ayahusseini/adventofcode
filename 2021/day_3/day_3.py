@@ -1,28 +1,27 @@
-'''Solution for day 3 of the advent of code.
+"""Solution for day 3 of the advent of code.
 
-input = The diagnostic report, list of binary numbers.'''
+input = The diagnostic report, list of binary numbers."""
 
 FILENAME = "inputs/day_3_input.txt"
 
 
 def extract_report(filename: str) -> list[str]:
-    '''Return the diagnostic data'''
+    """Return the diagnostic data"""
 
     r = []
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         for line in f.readlines():
-
             r.append(line.replace("\n", "").strip())
     return r
 
 
 def convert_binary_to_decimal(binary: str) -> int:
-    '''Return the decimal version of a binary number'''
+    """Return the decimal version of a binary number"""
     return int(binary, 2)
 
 
 def get_counts(strings: list[str], n: int) -> dict:
-    '''Return the count of each letter at the nth position of a string.'''
+    """Return the count of each letter at the nth position of a string."""
 
     counts = {"0": 0, "1": 0}
     for s in strings:
@@ -30,8 +29,10 @@ def get_counts(strings: list[str], n: int) -> dict:
     return counts
 
 
-def get_most_freq_nth_letter(strings: list[str], n: int, opposite: bool = False, default_if_equal: str = "1") -> str:
-    '''Return the most frequent nth letter in all the strings'''
+def get_most_freq_nth_letter(
+    strings: list[str], n: int, opposite: bool = False, default_if_equal: str = "1"
+) -> str:
+    """Return the most frequent nth letter in all the strings"""
 
     counts = get_counts(strings, n)
 
@@ -43,7 +44,7 @@ def get_most_freq_nth_letter(strings: list[str], n: int, opposite: bool = False,
 
 
 def most_freq_at_each_pos(d: list[str], opposite: bool = False) -> list[str]:
-    '''Return a list containing the most frequent letter at each position.'''
+    """Return a list containing the most frequent letter at each position."""
 
     item_length = len(d[0])
 
@@ -54,21 +55,21 @@ def most_freq_at_each_pos(d: list[str], opposite: bool = False) -> list[str]:
 
 
 def get_gamma_rate(diagnostic_report: list[str]) -> int:
-    '''Return the gamma rate as a decimal'''
+    """Return the gamma rate as a decimal"""
 
     binary = "".join(most_freq_at_each_pos(diagnostic_report, opposite=False))
     return convert_binary_to_decimal(binary)
 
 
 def get_epsilon_rate(diagnostic_report: list[str]) -> int:
-    '''Return the gamma rate as a decimal'''
+    """Return the gamma rate as a decimal"""
 
     binary = "".join(most_freq_at_each_pos(diagnostic_report, opposite=True))
     return convert_binary_to_decimal(binary)
 
 
 def get_filtered_down(diagnostic_report: list[str], opposite: bool = False) -> int:
-    '''Return the oxygen generator rating as a decimal.'''
+    """Return the oxygen generator rating as a decimal."""
 
     num_letters = len(diagnostic_report[0])
     default = "1" if not opposite else "0"
@@ -88,18 +89,18 @@ def get_filtered_down(diagnostic_report: list[str], opposite: bool = False) -> i
 
 
 def one_star_solution(filename: str) -> int:
-    '''Return the power rate from the diagnostic report'''
+    """Return the power rate from the diagnostic report"""
     diag = extract_report(filename)
     return get_epsilon_rate(diag) * get_gamma_rate(diag)
 
 
 def two_star_solution(filename: str) -> int:
-    '''Return the two star solution.'''
+    """Return the two star solution."""
     diag = extract_report(filename)
-    oxygen_consumption = convert_binary_to_decimal(get_filtered_down(
-        diag, opposite=False))
-    co2_consumption = convert_binary_to_decimal(get_filtered_down(
-        diag, opposite=True))
+    oxygen_consumption = convert_binary_to_decimal(
+        get_filtered_down(diag, opposite=False)
+    )
+    co2_consumption = convert_binary_to_decimal(get_filtered_down(diag, opposite=True))
     return oxygen_consumption * co2_consumption
 
 

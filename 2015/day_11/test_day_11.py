@@ -1,13 +1,18 @@
 import pytest
-from day_11 import increment_once, is_increasing_alphabetically, count_subsequences, is_matching, does_not_contain, is_valid_password
+from day_11 import (
+    increment_once,
+    is_increasing_alphabetically,
+    count_subsequences,
+    is_matching,
+    does_not_contain,
+    is_valid_password,
+)
 
 
 @pytest.mark.parametrize(
     "seq,exp",
-    [("hijklmmn", False),
-     ("abbceffg", False),
-     ("abbcegjk", False),
-     ("abcdffaa", True)])
+    [("hijklmmn", False), ("abbceffg", False), ("abbcegjk", False), ("abcdffaa", True)],
+)
 def test_valid_pw(seq, exp):
     assert is_valid_password(seq) == exp
 
@@ -77,38 +82,38 @@ def test_increment_once4():
 
 
 def test_increment_once_long_string():
-    assert increment_once("zzzzz") == "a"*5
+    assert increment_once("zzzzz") == "a" * 5
 
 
 def test_increment_once_long_string2():
-    assert increment_once("azzzzz") == "b"+"a"*5
+    assert increment_once("azzzzz") == "b" + "a" * 5
 
 
 def test_basic_count_subsequences_not_overlapping():
-    assert count_subsequences(
-        "aabbcc", 2, False, lambda x: x.count(x[0]) == len(x)) == 3
+    assert (
+        count_subsequences("aabbcc", 2, False, lambda x: x.count(x[0]) == len(x)) == 3
+    )
 
 
 def test_basic_count_subsequences_not_overlapping2():
-    assert count_subsequences(
-        "aaabbcc", 2, False, lambda x: x.count(x[0]) == len(x)) == 3
+    assert (
+        count_subsequences("aaabbcc", 2, False, lambda x: x.count(x[0]) == len(x)) == 3
+    )
 
 
 def test_basic_count_subsequences_overlapping():
-    assert count_subsequences(
-        "aaa", 2, True, lambda x: x.count(x[0]) == len(x)) == 2
+    assert count_subsequences("aaa", 2, True, lambda x: x.count(x[0]) == len(x)) == 2
 
 
 def test_basic_count_subsequences_overlapping2():
-    assert count_subsequences(
-        "aaa", 1, True, lambda x: True) == 3
+    assert count_subsequences("aaa", 1, True, lambda x: True) == 3
 
 
 def test_basic_count_subsequences_not_overlapping3():
-    assert count_subsequences(
-        "aaa", 1, True, lambda x: True) == 3
+    assert count_subsequences("aaa", 1, True, lambda x: True) == 3
 
 
 def test_basic_count_subsequences_overlapping3():
-    assert count_subsequences(
-        "aaabbcc", 2, True, lambda x: x.count(x[0]) == len(x)) == 4
+    assert (
+        count_subsequences("aaabbcc", 2, True, lambda x: x.count(x[0]) == len(x)) == 4
+    )

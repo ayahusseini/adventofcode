@@ -39,19 +39,19 @@ def test_files_text(files):
 
 def test_files_attributes(files):
     assert files.num_filled == len(
-        "00...111...2...333.44.5555.6666.777.888899".replace('.', ''))
+        "00...111...2...333.44.5555.6666.777.888899".replace(".", "")
+    )
     print(files.disk)
 
 
 def test_files_gaps(files):
-    assert files.count_gaps() == "00...111...2...333.44.5555.6666.777.888899".count(
-        '.')
+    assert files.count_gaps() == "00...111...2...333.44.5555.6666.777.888899".count(".")
 
 
 def test_checksum():
     disk = {}
     for idx, char in enumerate("00992111777.44.333....5555.6666.....8888.."):
-        if char != '.':
+        if char != ".":
             disk[idx] = int(char)
 
     files = Files(disk)
@@ -61,7 +61,7 @@ def test_checksum():
 def test_checksum_2(files):
     disk = {}
     for idx, char in enumerate("0099811188827773336446555566.............."):
-        if char != '.':
+        if char != ".":
             disk[idx] = int(char)
 
     files = Files(disk)

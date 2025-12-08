@@ -4,20 +4,12 @@ from day_3 import Grid
 
 @pytest.fixture
 def testgrid():
-    return Grid([
-        ['A', '*', 'C'],
-        ['D', 'E', 'F'],
-        ['G', '*', 'I']
-    ])
+    return Grid([["A", "*", "C"], ["D", "E", "F"], ["G", "*", "I"]])
 
 
 @pytest.fixture
 def numeric_grid():
-    return Grid([
-        ['1', '2', '.'],
-        ['3', '4', '5'],
-        ['.', '*', '.']
-    ])
+    return Grid([["1", "2", "."], ["3", "4", "5"], [".", "*", "."]])
 
 
 def test_extract_num(numeric_grid):
@@ -36,18 +28,22 @@ def test_extract_num_none(numeric_grid):
         numeric_grid.extract_full_num((2, 0))
 
 
-@pytest.mark.parametrize("grid, expected", [
-    ([['4', '6', '7', '.', '.', '1', '1', '4', '.', '.']], []),
-    ([['4', '*', '7', '.', '.', '1', '1', '4', '.', '.']], [(0, 1)]),
-    ([['4', '*'], [".", "*"]], [(0, 1), (1, 1)])
-])
+@pytest.mark.parametrize(
+    "grid, expected",
+    [
+        ([["4", "6", "7", ".", ".", "1", "1", "4", ".", "."]], []),
+        ([["4", "*", "7", ".", ".", "1", "1", "4", ".", "."]], [(0, 1)]),
+        ([["4", "*"], [".", "*"]], [(0, 1), (1, 1)]),
+    ],
+)
 def test_get_symbol_idx_positions(grid, expected):
     assert Grid.get_symbol_idx(grid) == expected
 
 
 def test_get_adjacent_middle(testgrid):
-    assert set(testgrid.get_adjacent((1, 1))) == set([(
-        0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)])
+    assert set(testgrid.get_adjacent((1, 1))) == set(
+        [(0, 0), (0, 1), (0, 2), (1, 0), (1, 2), (2, 0), (2, 1), (2, 2)]
+    )
 
 
 def test_get_adjacent_edge(testgrid):

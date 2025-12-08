@@ -1,5 +1,7 @@
 """Solution for advent of code day 6 2024"""
+
 from collections import defaultdict
+
 INPUT_FILE = "inputs/day_6_input.txt"
 TEST_FILE = "inputs/day_6_test_input.txt"
 
@@ -33,8 +35,8 @@ class Grid:
 
 
 class Guard:
-    _turns = {'^': '>', '>': 'v', '<': '^', 'v': '<'}
-    _orientations = {'^': (-1, 0), '>': (0, 1), '<': (0, -1), 'v': (1, 0)}
+    _turns = {"^": ">", ">": "v", "<": "^", "v": "<"}
+    _orientations = {"^": (-1, 0), ">": (0, 1), "<": (0, -1), "v": (1, 0)}
 
     def __init__(self, grid: Grid, position: tuple, symbol: tuple):
         """Instantiates a guard"""
@@ -83,34 +85,33 @@ class Guard:
 
 def load_file(filename: str) -> Guard:
     """Loads a file as a guard"""
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         lines = f.readlines()
 
     obstructions = defaultdict(lambda: [])
 
     for row, l in enumerate(lines):
-        l = l.replace('\n', '')
+        l = l.replace("\n", "")
         for col, char in enumerate(l):
-            if char == '#':
+            if char == "#":
                 obstructions[row].append(col)
-            elif char in ('>', '<', '^', 'v'):
+            elif char in (">", "<", "^", "v"):
                 initial_position = row, col
                 symbol = char
 
-    grid = Grid(obstructions, len(
-        lines), len(lines[0].replace('\n', '')))
+    grid = Grid(obstructions, len(lines), len(lines[0].replace("\n", "")))
     return Guard(grid, initial_position, symbol)
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     guard = load_file(filename)
     guard.simulate_walk_out_of_bounds()
     return guard.count_distinct_positions()
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     guard = load_file(filename)
     guard.simulate_walk_out_of_bounds()
     original_positions = set([pos for pos, _ in guard.path[1:]])

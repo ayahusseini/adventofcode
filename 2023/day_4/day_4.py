@@ -1,5 +1,4 @@
-'''Solution to advent of code day 4 2023
-'''
+"""Solution to advent of code day 4 2023"""
 
 INPUT_FILE = "inputs/day_4_input.txt"
 TEST_FILE = "inputs/day_4_test_input.txt"
@@ -12,18 +11,18 @@ class Card:
         self.nums = nums
 
     def get_wins(self) -> int:
-        '''Return a list of nums that are winning'''
-        return list(set(self.nums) - (set(self.nums)-set(self.winning)))
+        """Return a list of nums that are winning"""
+        return list(set(self.nums) - (set(self.nums) - set(self.winning)))
 
     def get_points(self) -> int:
         num_wins = len(self.get_wins())
         if not num_wins:
             return 0
-        return 2 ** (num_wins-1)
+        return 2 ** (num_wins - 1)
 
     @classmethod
     def from_line(cls, line: str):
-        '''Instantiate a card from a line'''
+        """Instantiate a card from a line"""
 
         card = int(line.split(":")[0].split(" ")[-1])
 
@@ -37,7 +36,7 @@ class Card:
 
 class Pile:
     def __init__(self, cards: list[Card]):
-        '''Instantiates a pile of scratchcards'''
+        """Instantiates a pile of scratchcards"""
         self.cards = cards
         self.copies = {c.card_num: 1 for c in cards}
 
@@ -56,7 +55,7 @@ class Pile:
 
 
 def load_file(filename: str) -> list[str]:
-    '''Loads the file as a list of integers'''
+    """Loads the file as a list of integers"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -65,7 +64,7 @@ def load_file(filename: str) -> list[str]:
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
 
     lines = load_file(filename)
     cards = [Card.from_line(l) for l in lines]
@@ -73,7 +72,7 @@ def one_star(filename: str):
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     lines = load_file(filename)
     original_cards = [Card.from_line(l) for l in lines]
     pile = Pile(original_cards)
@@ -82,7 +81,6 @@ def two_star(filename: str):
 
 
 if __name__ == "__main__":
-
     print(f"One star test solution is {one_star(TEST_FILE)}")
     print(f"Two star test solution is {two_star(TEST_FILE)}")
     print(f"One star solution is {one_star(INPUT_FILE)}")

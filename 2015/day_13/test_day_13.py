@@ -23,4 +23,6 @@ def test_get_all_cycles():
 
 def test_get_all_cycles2():
     assert get_all_cycles(["A", "B", "C"]) == [
-        ["A", "B", "C", "A"], ["A", "C", "B", "A"]]
+        ["A", "B", "C", "A"],
+        ["A", "C", "B", "A"],
+    ]

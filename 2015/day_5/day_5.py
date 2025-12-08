@@ -1,8 +1,8 @@
-'''day 5'''
+"""day 5"""
 
 
 def load_file(filename: str) -> list[str]:
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         lines = f.readlines()
     return lines
 
@@ -18,8 +18,7 @@ def is_three_vowels(string: str) -> bool:
 
 def one_letter_twice(string: str) -> bool:
     for i, l in enumerate(string[:-1]):
-
-        if l == string[i+1]:
+        if l == string[i + 1]:
             return True
     return False
 
@@ -34,22 +33,26 @@ def doesnt_contain_invalid(string: str) -> bool:
 
 def one_letter_sandwiched(string: str) -> bool:
     for i, l in enumerate(string[:-2]):
-        if l == string[i+2]:
+        if l == string[i + 2]:
             return True
     return False
 
 
 def non_overlapping_pair(string: str) -> bool:
     for i in range(len(string[:-1])):
-        substring = string[i:i+2]
-        for j in range(i+2, len(string[:-1])):
-            if substring == string[j:j+2]:
+        substring = string[i : i + 2]
+        for j in range(i + 2, len(string[:-1])):
+            if substring == string[j : j + 2]:
                 return True
     return False
 
 
 def all_conditions_one_star(string: str) -> bool:
-    return doesnt_contain_invalid(string) and one_letter_twice(string) and is_three_vowels(string)
+    return (
+        doesnt_contain_invalid(string)
+        and one_letter_twice(string)
+        and is_three_vowels(string)
+    )
 
 
 def all_conditions_two_star(string: str) -> bool:

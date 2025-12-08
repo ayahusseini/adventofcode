@@ -1,5 +1,7 @@
 """Solution to advent of code day 8 2023"""
+
 from collections import defaultdict
+
 INPUT_FILE = "inputs/day_8_input.txt"
 TEST_FILE = "inputs/day_8_test_input.txt"
 TEST_FILE_2 = "inputs/day_8_test_input_2.txt"
@@ -8,7 +10,7 @@ TEST_FILE_2 = "inputs/day_8_test_input_2.txt"
 class Node:
     """Binary Tree Node."""
 
-    def __init__(self, name: str,  left=None, right=None):
+    def __init__(self, name: str, left=None, right=None):
         """Instantiates the node."""
         self.name = name
         self.left = left
@@ -19,7 +21,7 @@ class Node:
         count = 0
         root = self
         for step in get_next_step(seq):
-            root = self.left if step == 'L' else self.right
+            root = self.left if step == "L" else self.right
             self.cache[seq][count] = root
             count += 1
             yield stop_condition(root)
@@ -44,9 +46,9 @@ def load_file(filename: str) -> tuple[str, dict]:
         l = l.strip()
         if not l:
             continue
-        elif '=' in l:
-            curr, children = l.split(' = ')
-            left, right = children[1:-1].split(', ')
+        elif "=" in l:
+            curr, children = l.split(" = ")
+            left, right = children[1:-1].split(", ")
             nodes[curr].name = curr
             nodes[left].name = left
             nodes[right].name = right
@@ -62,7 +64,7 @@ def follow_instructions(instructions: str, root: list[Node], stop_condition):
     count = 0
     for i in get_next_step(instructions):
         count += 1
-        root = [r.left if i == 'L' else r.right for r in roots]
+        root = [r.left if i == "L" else r.right for r in roots]
         if stop_condition(roots):
             return count
 
@@ -70,20 +72,20 @@ def follow_instructions(instructions: str, root: list[Node], stop_condition):
 def one_star(filename: str):
     """Returns the one star solution"""
     seq, nodes = load_file(filename)
-    root = nodes['AAA']
-    target = nodes['ZZZ']
+    root = nodes["AAA"]
+    target = nodes["ZZZ"]
     return root.traverse(seq, stop_condition=lambda x: x == [target])
 
 
 def all_nodes_end_on_z(nodes: list[Node], cache: dict = dict()) -> bool:
-    """Returns True if all node names end with a 'Z' """
-    return all(n.name[-1] == 'Z' for n in nodes)
+    """Returns True if all node names end with a 'Z'"""
+    return all(n.name[-1] == "Z" for n in nodes)
 
 
 def two_star(filename: str):
     """Returns the two star solution"""
     seq, nodes = load_file(filename)
-    roots = [node for node in nodes.values() if node.name[-1] == 'A']
+    roots = [node for node in nodes.values() if node.name[-1] == "A"]
     return follow_instructions(seq, roots, stop_condition=all_nodes_end_on_z)
 
 

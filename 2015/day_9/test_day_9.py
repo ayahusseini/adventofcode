@@ -19,18 +19,24 @@ def test_get_shortest_path_from_node(graph):
 
 
 def test_get_longest_path_from_node(graph):
-    assert get_shortest_path_from_start(
-        graph, "D", clear_visited=True, edge_multiplier=-1) == 982
+    assert (
+        get_shortest_path_from_start(graph, "D", clear_visited=True, edge_multiplier=-1)
+        == 982
+    )
 
 
 def test_get_longest_path_from_node2(graph):
-    assert get_shortest_path_from_start(
-        graph, "L", clear_visited=True, edge_multiplier=-1) == 659
+    assert (
+        get_shortest_path_from_start(graph, "L", clear_visited=True, edge_multiplier=-1)
+        == 659
+    )
 
 
 def test_get_longest_path_from_node3(graph):
-    assert get_shortest_path_from_start(
-        graph, "B", clear_visited=True, edge_multiplier=-1) == 982
+    assert (
+        get_shortest_path_from_start(graph, "B", clear_visited=True, edge_multiplier=-1)
+        == 982
+    )
 
 
 def test_get_shortest_path_from_node2(graph):
@@ -58,4 +64,4 @@ def test_get_path_distance(graph):
 
 
 def test_get_path_distance2(graph):
-    assert graph.get_path_length(["L", "D", "L", "B"]) == 464*2 + 518
+    assert graph.get_path_length(["L", "D", "L", "B"]) == 464 * 2 + 518

@@ -1,5 +1,10 @@
 import pytest
-from day_8 import get_num_characters_of_string, load_file, num_characters_of_code_after_encoding
+from day_8 import (
+    get_num_characters_of_string,
+    load_file,
+    num_characters_of_code_after_encoding,
+)
+
 TEST_INPUT = "inputs/day_8_test_input.txt"
 
 

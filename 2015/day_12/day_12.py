@@ -1,18 +1,19 @@
-'''Solution to advent of code day 12 2015
-'''
+"""Solution to advent of code day 12 2015"""
+
 import json
+
 INPUT_FILE = "inputs/day_12_input.json"
 
 
 def load_json_dict(filename: str) -> list[dict]:
-    '''Return a list of dictionaries containing the json file contents'''
+    """Return a list of dictionaries containing the json file contents"""
     with open(filename, "r") as f:
         d = json.load(f)
     return d
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
 
     s = json.dumps(load_json_dict(filename))
     return sum_numbers_in_string(s)
@@ -23,7 +24,6 @@ def sum_numbers_in_string(s: str):
     i = 0
 
     while i < len(s):
-
         if s[i] == "-":
             multiplier = -1
             i += 1
@@ -34,18 +34,18 @@ def sum_numbers_in_string(s: str):
             continue
 
         j = i
-        while s[i:j+1].isnumeric():
+        while s[i : j + 1].isnumeric():
             j += 1
 
         num += int(s[i:j]) * multiplier
-        i = j+1
+        i = j + 1
         multiplier = 1
     return num
 
 
 def filter_red_from_list(l: list):
-    '''Remove all dictionaries with the value "red" from a list.
-    Replace them with empty dictionaries.'''
+    """Remove all dictionaries with the value "red" from a list.
+    Replace them with empty dictionaries."""
 
     for pos, i in enumerate(l):
         if isinstance(i, dict):
@@ -63,12 +63,11 @@ def filter_red_from_list(l: list):
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     s = json.dumps(filter_red_from_list(load_json_dict(filename)))
     return sum_numbers_in_string(s)
 
 
 if __name__ == "__main__":
-
     print(f"One star solution is {one_star(INPUT_FILE)}")
     print(f"Two star solution is {two_star(INPUT_FILE)}")

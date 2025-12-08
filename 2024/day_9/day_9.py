@@ -1,4 +1,5 @@
 """Solution to advent of code day 9 2024"""
+
 INPUT_FILE = "inputs/day_9_input.txt"
 TEST_FILE = "inputs/day_9_test_input.txt"
 
@@ -13,14 +14,15 @@ class Files:
     def get_file_quantities(self) -> dict:
         """Maps a file id to the number of blocks it occupies."""
 
-        return {f: list(self.disk.values()).count(f)
-                for f in set(self.disk.values())}
+        return {f: list(self.disk.values()).count(f) for f in set(self.disk.values())}
 
     def get_first_index(self) -> dict:
         """Maps a file id to the first index it appears in."""
 
         first_idx = dict()
-        for idx, file_id in sorted(self.disk.items(), key=lambda x: x[0], reverse=False):
+        for idx, file_id in sorted(
+            self.disk.items(), key=lambda x: x[0], reverse=False
+        ):
             if file_id in first_idx:
                 continue
             first_idx[file_id] = idx
@@ -35,7 +37,7 @@ class Files:
         write_to = 0
 
         for id, i in enumerate(range(0, len(line), 2)):
-            batch = line[i:i+2]
+            batch = line[i : i + 2]
             batch = batch + "0" if len(batch) < 2 else batch
 
             num_blocks = int(batch[0])
@@ -73,8 +75,7 @@ class Files:
         l = 0
         r = max(self.disk.keys())
 
-        while (l <= r):
-
+        while l <= r:
             if l in self.disk.keys():
                 l += 1
             elif r not in self.disk.keys():
@@ -97,7 +98,6 @@ class Files:
                 continue
 
             while g_end not in self.disk.keys() and g_end < ridx:
-
                 if (g_end - g_start) + 1 >= minsize:
                     yield range(g_start, g_end + 1)
 
@@ -115,7 +115,6 @@ class Files:
         file_id = max(self.disk.values())
 
         while file_id >= 0:
-
             filesize = quantities[file_id]
             fileidx = first_idx[file_id]
             gap = next(self.leftmost_gap(fileidx, filesize), None)
@@ -157,7 +156,7 @@ def one_star(filename: str):
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     files = Files.from_line(load_file(filename))
     files.fill_files()
 

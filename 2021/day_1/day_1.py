@@ -1,4 +1,4 @@
-'''Solve advent of code day_1'''
+"""Solve advent of code day_1"""
 
 FILE = "inputs/day_1_input.txt"
 
@@ -14,21 +14,21 @@ def get_measurements(filename: str) -> list[int]:
 
 
 def get_window_sums(m: list[int]) -> list[int]:
-    '''Get a list containing the sum of each window 
-    of width 3.'''
+    """Get a list containing the sum of each window
+    of width 3."""
     sums = []
-    for i in range(len(m)-2):
+    for i in range(len(m) - 2):
         j = i + 2
-        sums.append(sum(m[i:j+1]))
+        sums.append(sum(m[i : j + 1]))
     return sums
 
 
 def num_measurements_bigger_than_prev(m: list) -> int:
-    '''Return the number of measurements in a list that 
-    are bigger than the previous one.'''
+    """Return the number of measurements in a list that
+    are bigger than the previous one."""
     is_bigger = [0]
     for i in range(1, len(m)):
-        if m[i] > m[i-1]:
+        if m[i] > m[i - 1]:
             is_bigger.append(1)
         else:
             is_bigger.append(0)

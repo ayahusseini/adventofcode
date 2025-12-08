@@ -1,5 +1,5 @@
-'''Solution to advent of code day 4 2024
-'''
+"""Solution to advent of code day 4 2024"""
+
 import numpy as np
 
 INPUT_FILE = "inputs/day_4_input.txt"
@@ -8,6 +8,7 @@ TEST_FILE = "inputs/day_4_test_input.txt"
 
 class WordSearch:
     """Word search class"""
+
     diagonal = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
     horizontal = [(1, 0), (-1, 0), (0, 1), (0, -1)]
     all_directions = diagonal + horizontal
@@ -21,7 +22,9 @@ class WordSearch:
         """Check if an index is within the array"""
         return 0 <= row < self.nrows and 0 <= col < self.ncols
 
-    def _is_next_letter(self, row: int, col: int, direction: tuple, nextletter: str) -> bool:
+    def _is_next_letter(
+        self, row: int, col: int, direction: tuple, nextletter: str
+    ) -> bool:
         """Check if the next letter matches the expected value in a given direction."""
         nr, nc = row + direction[0], col + direction[1]
         return self._is_index_valid(nr, nc) and self.lines[nr, nc] == nextletter
@@ -44,8 +47,7 @@ class WordSearch:
             elif idx < len(target) - 1:
                 expected = target[idx + 1]
                 if self._is_next_letter(r, c, change, expected):
-                    stack.append(
-                        (r + change[0], c + change[1], idx+1, change))
+                    stack.append((r + change[0], c + change[1], idx + 1, change))
             else:
                 indeces.append([r, c, change])
 
@@ -59,7 +61,8 @@ class WordSearch:
         """Count the number of crosses formed by the word in diagonal directions."""
         if len(word) % 2 == 0:
             raise ValueError(
-                "The word must have an odd number of letters to form a cross pattern.")
+                "The word must have an odd number of letters to form a cross pattern."
+            )
 
         last_letter = self.find_target(word, WordSearch.diagonal)
         steps = len(word) // 2
@@ -67,8 +70,7 @@ class WordSearch:
         count = 0
 
         for r, c, change in last_letter:
-            centre = (r - (change[0] * steps),
-                      c - (change[1] * steps))
+            centre = (r - (change[0] * steps), c - (change[1] * steps))
             if centre in middles:
                 count += 1
             else:
@@ -78,7 +80,7 @@ class WordSearch:
 
     def __str__(self) -> str:
         """Returns a string representation of the lines"""
-        return '\n'.join(''.join(row) for row in self.lines)
+        return "\n".join("".join(row) for row in self.lines)
 
 
 def load_file(filename: str) -> WordSearch:
@@ -91,13 +93,13 @@ def load_file(filename: str) -> WordSearch:
 def one_star(filename: str) -> int:
     """Compute the one-star solution."""
     word_search = load_file(filename)
-    return word_search.count_target('XMAS', WordSearch.all_directions)
+    return word_search.count_target("XMAS", WordSearch.all_directions)
 
 
 def two_star(filename: str) -> int:
     """Compute the two-star solution."""
     word_search = load_file(filename)
-    return word_search.count_crosses('MAS')
+    return word_search.count_crosses("MAS")
 
 
 if __name__ == "__main__":

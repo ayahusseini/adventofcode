@@ -1,20 +1,19 @@
-'''Solution to advent of code day 7 2024
-'''
+"""Solution to advent of code day 7 2024"""
 
 INPUT_FILE = "inputs/day_7_input.txt"
 TEST_FILE = "inputs/day_7_test_input.txt"
 
 
 def load_file(filename: str):
-    '''Loads the file as a target and a list of integers'''
+    """Loads the file as a target and a list of integers"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
 
     for l in lines:
-        l = l.replace('\n', '').strip()
-        target, nums_text = l.split(':')
-        yield int(target), [int(n) for n in nums_text.split(' ') if n]
+        l = l.replace("\n", "").strip()
+        target, nums_text = l.split(":")
+        yield int(target), [int(n) for n in nums_text.split(" ") if n]
 
 
 def concatenate(num1: int, num2: int) -> int:
@@ -60,13 +59,13 @@ def get_total_callibration_result(input_file: str, allow_concatenate: bool):
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
 
     return get_total_callibration_result(filename, False)
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
 
     return get_total_callibration_result(filename, True)
 

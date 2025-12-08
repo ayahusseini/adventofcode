@@ -1,5 +1,5 @@
-'''Solution to advent of code day 3 2024
-'''
+"""Solution to advent of code day 3 2024"""
+
 from collections import defaultdict
 import re
 
@@ -33,21 +33,20 @@ def read_conditional_instructions(instructions: list[tuple]) -> int:
 
 
 def load_file(filename: str, extraction_pattern: str) -> list[int]:
-    '''Loads the file and returns a list of multiplication instructions'''
-    with open(filename, 'r') as f:
-        instructions = extract_multiplication_instructions(
-            f.read(), extraction_pattern)
+    """Loads the file and returns a list of multiplication instructions"""
+    with open(filename, "r") as f:
+        instructions = extract_multiplication_instructions(f.read(), extraction_pattern)
     return instructions
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     instructions = load_file(filename, MULTIPLICATION_PATTERN)
-    return sum([int(x)*int(y) for x, y in instructions])
+    return sum([int(x) * int(y) for x, y in instructions])
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     instructions = load_file(filename, CONDITIONAL_MULTIPLICATION_PATTERN)
     return read_conditional_instructions(instructions)
 

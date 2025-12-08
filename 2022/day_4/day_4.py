@@ -1,12 +1,11 @@
-'''Solution to advent of code day 4 2022
-'''
+"""Solution to advent of code day 4 2022"""
 
 INPUT_FILE = "inputs/day_4_input.txt"
 TEST_FILE = "inputs/day_4_test_input.txt"
 
 
 def load_file(filename: str) -> list[str]:
-    '''Loads the file as a list of integers'''
+    """Loads the file as a list of integers"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -15,8 +14,8 @@ def load_file(filename: str) -> list[str]:
 
 
 def get_pairs(lines: str) -> list[list]:
-    '''Return a list of lists. Each sub-list contains a pair of lists
-    representing the ranges.'''
+    """Return a list of lists. Each sub-list contains a pair of lists
+    representing the ranges."""
     pairs = []
     for line in lines:
         pair = line.split(",")
@@ -40,7 +39,7 @@ def is_overlap(range1: list, range2: list) -> bool:
 
 
 def is_complete_overlap(range1: list, range2: list) -> bool:
-    '''Return true if there's a complete overlap'''
+    """Return true if there's a complete overlap"""
     s, l = range1, range2
 
     if range1[0] > range2[0]:
@@ -52,7 +51,7 @@ def is_complete_overlap(range1: list, range2: list) -> bool:
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     lines = load_file(filename)
     pairs = get_pairs(lines)
     print(len(pairs))
@@ -60,7 +59,7 @@ def one_star(filename: str):
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     lines = load_file(filename)
     pairs = get_pairs(lines)
     print(len(pairs))

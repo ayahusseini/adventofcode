@@ -1,12 +1,11 @@
-'''Solution to advent of code day 10 2021
-'''
+"""Solution to advent of code day 10 2021"""
 
 INPUT_FILE = "inputs/day_10_input.txt"
 TEST_FILE = "inputs/day_10_test_input.txt"
 
 
 def load_file(filename: str) -> list[str]:
-    '''Loads the file as a list of strings'''
+    """Loads the file as a list of strings"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -15,14 +14,14 @@ def load_file(filename: str) -> list[str]:
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     lines = load_file(filename)
 
     return
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
 
     return
 

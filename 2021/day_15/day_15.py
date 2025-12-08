@@ -1,5 +1,4 @@
-'''Solution to advent of code day 15 2021
-'''
+"""Solution to advent of code day 15 2021"""
 
 import numpy as np
 
@@ -8,7 +7,6 @@ TEST_FILE = "inputs/day_15_test_input.txt"
 
 
 class Grid:
-
     def __init__(self, array: np.ndarray, allow_diag: bool = False):
         """Instangiate a map of caves"""
         self.array = array
@@ -29,8 +27,7 @@ class Grid:
         while not visited[*end]:
             temp_distances = dist.copy().astype(float)
             temp_distances[visited] = np.inf
-            node = np.unravel_index(
-                temp_distances.argmin(), shape=temp_distances.shape)
+            node = np.unravel_index(temp_distances.argmin(), shape=temp_distances.shape)
             node_value = temp_distances[node]
 
             visited[*node] = True
@@ -46,7 +43,7 @@ class Grid:
 
 
 def load_file(filename: str) -> np.ndarray:
-    '''Loads the file as a numpy array'''
+    """Loads the file as a numpy array"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -55,15 +52,15 @@ def load_file(filename: str) -> np.ndarray:
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     grid_values = load_file(filename)
     grid = Grid(grid_values)
 
-    return grid.min_path_length([0, 0], [grid.nrows-1, grid.ncols-1])
+    return grid.min_path_length([0, 0], [grid.nrows - 1, grid.ncols - 1])
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
 
     return
 

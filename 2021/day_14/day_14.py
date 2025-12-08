@@ -1,11 +1,13 @@
 """Solution to day 14 2021"""
+
 from collections import Counter, defaultdict
+
 INPUT_FILE = "inputs/day_14_input.txt"
 TEST_FILE = "inputs/day_14_test_input.txt"
 
 
 def load_file(filename: str) -> tuple:
-    '''Loads the file as a template and a list of rules'''
+    """Loads the file as a template and a list of rules"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -14,7 +16,7 @@ def load_file(filename: str) -> tuple:
     rules = {}
 
     for l in lines[1:]:
-        pair, insertion = l.replace("\n", "").split(' -> ')
+        pair, insertion = l.replace("\n", "").split(" -> ")
         rules[pair] = insertion
 
     return template, rules
@@ -22,11 +24,11 @@ def load_file(filename: str) -> tuple:
 
 def get_pair_counter(template: str) -> Counter:
     """Splits the template into a list of overlapping pairs"""
-    return Counter([template[i:i+2] for i in range(len(template)-1)])
+    return Counter([template[i : i + 2] for i in range(len(template) - 1)])
 
 
 def implement_step(pair_counts: Counter, rules: dict) -> Counter:
-    """Implements a single step of pair insertion. 
+    """Implements a single step of pair insertion.
     Returns the new pair counts dictionary"""
     new_pair_counts = Counter()
     for pair, count in pair_counts.items():
@@ -56,20 +58,19 @@ def get_max_min_occurances(template: str, rule: dict, num_steps: int) -> int:
     """Returns the difference between the max and min occurances of a polymer"""
     pairs = get_pair_counter(template)
     final_pair_counter = polymerise_n_times(num_steps, pairs, rule)
-    polymer_counter = get_polymer_counter(
-        template, final_pair_counter).most_common()
+    polymer_counter = get_polymer_counter(template, final_pair_counter).most_common()
     return polymer_counter[0][1] - polymer_counter[-1][1]
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     curr_template, rule_dict = load_file(filename)
 
     return get_max_min_occurances(curr_template, rule_dict, 10)
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     curr_template, rule_dict = load_file(filename)
 
     return get_max_min_occurances(curr_template, rule_dict, 40)

@@ -1,5 +1,4 @@
-'''Solution to advent of code day 7 2023
-'''
+"""Solution to advent of code day 7 2023"""
 
 from collections import defaultdict
 
@@ -9,7 +8,8 @@ TEST_FILE = "inputs/day_7_test_input.txt"
 
 class Card:
     """A card within a hand."""
-    symbols = ['A', 'K', 'Q', 'J', 'T', '9', '8', '7', '6', '5', '4', '3', '2']
+
+    symbols = ["A", "K", "Q", "J", "T", "9", "8", "7", "6", "5", "4", "3", "2"]
     strengths = {s: i for i, s in enumerate(symbols[::-1])}
 
     def __init__(self, symbol: str):
@@ -31,7 +31,8 @@ class Card:
 
 class SpecialCard(Card):
     """A card within a special hand where Joker is the weakest symbol."""
-    symbols = ['A', 'K', 'Q', 'T', '9', '8', '7', '6', '5', '4', '3', '2', 'J']
+
+    symbols = ["A", "K", "Q", "T", "9", "8", "7", "6", "5", "4", "3", "2", "J"]
     strengths = {s: i for i, s in enumerate(symbols[::-1])}
 
     def __init__(self, symbol: str):
@@ -41,6 +42,7 @@ class SpecialCard(Card):
 
 class Hand:
     """A collection of cards"""
+
     frequency_id = {
         (1, 1, 1, 1, 1): 0,
         (2, 1, 1, 1): 1,
@@ -48,7 +50,7 @@ class Hand:
         (3, 1, 1): 3,
         (3, 2): 4,
         (4, 1): 5,
-        (5,): 6
+        (5,): 6,
     }
     card_type = Card
 
@@ -86,7 +88,6 @@ class Hand:
 
         for c1, c2 in zip(self.cards, hand2.cards):
             if c1 != c2:
-
                 return c1 > c2
 
         return False
@@ -102,13 +103,14 @@ class Hand:
     @classmethod
     def from_line(cls, line: str):
         """Instantiates a hand from an input line"""
-        hand, bid = line.split(' ')
+        hand, bid = line.split(" ")
         cards = [cls.card_type(l) for l in hand]
         return cls(cards, int(bid))
 
 
 class JokerHand(Hand):
     """A special case of the hand where the Joker rule is considered."""
+
     card_type = SpecialCard
 
     def __init__(self, cards: list[Card], bid: int):
@@ -123,9 +125,9 @@ class JokerHand(Hand):
             frequencies[c.symbol] += 1
 
         joker_count = 0
-        if 'J' in frequencies:
-            joker_count = frequencies['J']
-            del frequencies['J']
+        if "J" in frequencies:
+            joker_count = frequencies["J"]
+            del frequencies["J"]
 
         frequency_pattern = sorted(frequencies.values(), reverse=True)
         if not frequency_pattern:
@@ -135,7 +137,7 @@ class JokerHand(Hand):
 
 
 def load_file(filename: str, hand_class=Hand) -> list[Hand]:
-    '''Loads the file as a list of hands'''
+    """Loads the file as a list of hands"""
     hands = []
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -145,17 +147,17 @@ def load_file(filename: str, hand_class=Hand) -> list[Hand]:
 
 
 def one_star(filename: str) -> int:
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     hands = load_file(filename)
     hands.sort()
-    return sum([(i+1)*h.bid for i, h in enumerate(hands)])
+    return sum([(i + 1) * h.bid for i, h in enumerate(hands)])
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     hands = load_file(filename, hand_class=JokerHand)
     hands.sort()
-    return sum([(i+1)*h.bid for i, h in enumerate(hands)])
+    return sum([(i + 1) * h.bid for i, h in enumerate(hands)])
 
 
 if __name__ == "__main__":

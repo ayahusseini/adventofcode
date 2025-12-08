@@ -1,6 +1,11 @@
 import pytest
 
-from day_2 import get_surface_area, get_smallest_side_area, get_dimensions_from_string, get_smallest_side_perimeter
+from day_2 import (
+    get_surface_area,
+    get_smallest_side_area,
+    get_dimensions_from_string,
+    get_smallest_side_perimeter,
+)
 
 
 @pytest.mark.parametrize("l,w,h,area", [(1, 1, 1, 6), (2, 3, 4, 52), (1, 1, 10, 42)])

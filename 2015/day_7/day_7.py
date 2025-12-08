@@ -5,7 +5,7 @@ TEST_FILE = "inputs/day_7_test_input.txt"
 
 
 def load_file(filename: str) -> list[int]:
-    '''Loads the file as a list of integers'''
+    """Loads the file as a list of integers"""
 
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -14,8 +14,8 @@ def load_file(filename: str) -> list[int]:
 
 
 def get_components_from_text(component_text: str):
-    ''' Component text is a text-representation
-    of the component in the form inputs -> outputs'''
+    """Component text is a text-representation
+    of the component in the form inputs -> outputs"""
 
     gate_class = "NOGATE"
     for i in ["AND", "OR", "NOT", "LSHIFT", "RSHIFT"]:
@@ -23,20 +23,25 @@ def get_components_from_text(component_text: str):
             gate_class = i
             break
 
-    incoming_names = [i.strip() for i in component_text.split(
-        " -> ")[0].split(" ") if i.islower() or i.isnumeric()]
+    incoming_names = [
+        i.strip()
+        for i in component_text.split(" -> ")[0].split(" ")
+        if i.islower() or i.isnumeric()
+    ]
 
     outgoing = component_text.split(" -> ")[1].strip()
 
     incoming = [i if i.isalpha() else int(i) for i in incoming_names]
 
-    return {'in': incoming, 'out': outgoing, 'gate': gate_class}
+    return {"in": incoming, "out": outgoing, "gate": gate_class}
 
 
 def get_in_degrees(lines: list[dict]):
-    '''Map each component id (position in the list) to the number of incoming wires'''
-    return {i: len(
-        list(filter(lambda x: not isinstance(x, int), l['in']))) for i, l in enumerate(lines)}
+    """Map each component id (position in the list) to the number of incoming wires"""
+    return {
+        i: len(list(filter(lambda x: not isinstance(x, int), l["in"])))
+        for i, l in enumerate(lines)
+    }
 
 
 def sort_components(lines: list[dict]):
@@ -49,11 +54,11 @@ def sort_components(lines: list[dict]):
         curr_component = queue[0]
 
         sorted.append(curr_component)
-        next_wire = curr_component['out']
+        next_wire = curr_component["out"]
 
         next_component_ids = []
         for i, l in enumerate(lines):
-            if next_wire in l['in']:
+            if next_wire in l["in"]:
                 next_component_ids += [i]
 
         # reduce the in degrees of the next component
@@ -68,27 +73,27 @@ def sort_components(lines: list[dict]):
 
 
 def get_and(signal1: int, signal2: int) -> int:
-    '''Return the bitwise and'''
+    """Return the bitwise and"""
     return signal1 & signal2
 
 
 def get_left_shift(signal1: int, signal2: int) -> int:
-    '''Left shift signal 1 by signal 2'''
+    """Left shift signal 1 by signal 2"""
     return signal1 << signal2
 
 
 def get_complement(signal1: int) -> int:
-    '''Return the bitwise complement'''
-    return 65536 + ~ signal1
+    """Return the bitwise complement"""
+    return 65536 + ~signal1
 
 
 def get_right_shift(signal1: int, signal2: int) -> int:
-    '''Return signal1 shifted to the right by signal 2'''
+    """Return signal1 shifted to the right by signal 2"""
     return signal1 >> signal2
 
 
 def get_or(signal1: int, signal2: int) -> int:
-    '''Return the bitwise or of signal1 and signal2'''
+    """Return the bitwise or of signal1 and signal2"""
     return signal1 | signal2
 
 
@@ -98,29 +103,30 @@ def get_command_map() -> dict:
         "OR": get_or,
         "NOT": get_complement,
         "LSHIFT": get_left_shift,
-        "RSHIFT": get_right_shift
+        "RSHIFT": get_right_shift,
     }
 
 
 def get_signal_value(lines: list[dict], wire_name: str, override_wire: dict = {}):
-    '''Get the value of the signal at a particular wire.
-    You can override certain wire signals using the override_wire dictionary.'''
+    """Get the value of the signal at a particular wire.
+    You can override certain wire signals using the override_wire dictionary."""
 
     gate_command_map = get_command_map()
     lines = sort_components(lines)
     wire_values = dict()
 
     for l in lines:
-        input_values = [i if isinstance(
-            i, int) else wire_values.get(i) for i in l['in']]
+        input_values = [
+            i if isinstance(i, int) else wire_values.get(i) for i in l["in"]
+        ]
         gate = gate_command_map.get(l["gate"], False)
 
-        if l['out'] in override_wire:
-            wire_values[l['out']] = override_wire[l['out']]
+        if l["out"] in override_wire:
+            wire_values[l["out"]] = override_wire[l["out"]]
         elif gate:
-            wire_values[l['out']] = gate(*input_values)
+            wire_values[l["out"]] = gate(*input_values)
         elif len(input_values) == 1:
-            wire_values[l['out']] = input_values[0]
+            wire_values[l["out"]] = input_values[0]
 
         if wire_name in wire_values:
             return wire_values.get(wire_name)
@@ -129,14 +135,14 @@ def get_signal_value(lines: list[dict], wire_name: str, override_wire: dict = {}
 def one_star(filename: str):
     lines = load_file(filename)
     nodes = [get_components_from_text(l) for l in lines]
-    return get_signal_value(nodes, 'a')
+    return get_signal_value(nodes, "a")
 
 
 def two_star(filename: str):
     lines = load_file(filename)
     nodes = [get_components_from_text(l) for l in lines]
-    value_of_b = get_signal_value(nodes, 'a')
-    return get_signal_value(nodes, 'a', override_wire={'b': value_of_b})
+    value_of_b = get_signal_value(nodes, "a")
+    return get_signal_value(nodes, "a", override_wire={"b": value_of_b})
 
 
 if __name__ == "__main__":

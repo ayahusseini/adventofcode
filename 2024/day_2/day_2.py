@@ -1,5 +1,5 @@
-'''Solution to advent of code day 2 2024
-'''
+"""Solution to advent of code day 2 2024"""
+
 from collections import defaultdict
 
 INPUT_FILE = "inputs/day_2_input.txt"
@@ -14,7 +14,7 @@ class Report:
     @classmethod
     def from_line(cls, line: str):
         """Instantiates a report from a line"""
-        return cls(list(map(lambda x: int(x), line.split(' '))))
+        return cls(list(map(lambda x: int(x), line.split(" "))))
 
     def is_safe(self) -> bool:
         """Returns True if a report is safe"""
@@ -34,7 +34,7 @@ class Report:
     def is_safe_with_removal(self):
         full_numbers = self.numbers.copy()
         for i in range(len(self.numbers)):
-            self.numbers = full_numbers[:i] + full_numbers[i+1:]
+            self.numbers = full_numbers[:i] + full_numbers[i + 1 :]
             if self.is_safe():
                 self.numbers = full_numbers
                 return True
@@ -46,12 +46,12 @@ class Report:
     def get_differences(numbers):
         """Returns the differences between adjacent pairs"""
 
-        for i in range(0, len(numbers)-1):
-            yield numbers[i] - numbers[i+1]
+        for i in range(0, len(numbers) - 1):
+            yield numbers[i] - numbers[i + 1]
 
 
 def load_file(filename: str) -> list[Report]:
-    '''Loads the file as a list of reports'''
+    """Loads the file as a list of reports"""
     reports = []
     with open(filename, "r") as f:
         lines = f.readlines()
@@ -61,13 +61,13 @@ def load_file(filename: str) -> list[Report]:
 
 
 def one_star(filename: str) -> int:
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     reports = load_file(filename)
     return sum([r.is_safe() for r in reports])
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     reports = load_file(filename)
     return sum([r.is_safe_with_removal() for r in reports])
 

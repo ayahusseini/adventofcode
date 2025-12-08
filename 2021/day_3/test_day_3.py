@@ -1,13 +1,22 @@
 import pytest
 
-from day_3 import extract_report, convert_binary_to_decimal, get_most_freq_nth_letter, get_gamma_rate, get_epsilon_rate, get_filtered_down
+from day_3 import (
+    extract_report,
+    convert_binary_to_decimal,
+    get_most_freq_nth_letter,
+    get_gamma_rate,
+    get_epsilon_rate,
+    get_filtered_down,
+)
 
 TEST_FILE = "inputs/day_3_test_input.txt"
 
 
 @pytest.fixture
 def test_binary():
-    return """00100,11110,10110,10111,10101,01111,00111,11100,10000,11001,00010,01010""".split(",")
+    return """00100,11110,10110,10111,10101,01111,00111,11100,10000,11001,00010,01010""".split(
+        ","
+    )
 
 
 @pytest.mark.parametrize("bin,expected", [("10110", 22), ("01001", 9)])
@@ -20,7 +29,9 @@ def test_extract_report(test_binary):
     assert extract_report(TEST_FILE) == test_binary
 
 
-@pytest.mark.parametrize("n,expected", [(0, "1"), (1, "0"), (2, "1"), (3, "1"), (4, "0")])
+@pytest.mark.parametrize(
+    "n,expected", [(0, "1"), (1, "0"), (2, "1"), (3, "1"), (4, "0")]
+)
 def test_most_frequent_nth_letter(n, expected, test_binary):
     assert get_most_freq_nth_letter(test_binary, n) == expected
 

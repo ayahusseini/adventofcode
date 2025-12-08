@@ -1,4 +1,5 @@
-'''Solution to day 6 2021'''
+"""Solution to day 6 2021"""
+
 from collections import defaultdict
 
 TEST_FILE = "inputs/day_6_test_input.txt"
@@ -14,7 +15,7 @@ NUM_DAYS_TWO_STAR = 256
 
 
 def load_file(filename: str) -> list[int]:
-    '''Loads the file as a list of integers'''
+    """Loads the file as a list of integers"""
 
     with open(filename, "r") as f:
         line = f.readline()
@@ -23,7 +24,7 @@ def load_file(filename: str) -> list[int]:
 
 
 def update_state_one_day(curr_state: dict) -> dict:
-    '''Updates the state'''
+    """Updates the state"""
 
     new_state = defaultdict(lambda: 0)
 
@@ -38,7 +39,7 @@ def update_state_one_day(curr_state: dict) -> dict:
 
 
 def update_state_n_days(initial_state: dict, num_days) -> dict:
-    '''Updates the state dictionary after num_days have passed'''
+    """Updates the state dictionary after num_days have passed"""
 
     for _ in range(num_days):
         initial_state = update_state_one_day(initial_state)
@@ -46,19 +47,19 @@ def update_state_n_days(initial_state: dict, num_days) -> dict:
 
 
 def find_total_population_after_n_days(initial_state_list: list, days: int) -> int:
-    '''Given a list of initial states, return the total population after n days'''
+    """Given a list of initial states, return the total population after n days"""
     state = {i: initial_state_list.count(i) for i in initial_state_list}
     return sum([v for v in update_state_n_days(state, days).values()])
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     state = load_file(filename)
     return find_total_population_after_n_days(state, NUM_DAYS_ONE_STAR)
 
 
 def two_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     state = load_file(filename)
     return find_total_population_after_n_days(state, NUM_DAYS_TWO_STAR)
 

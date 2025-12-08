@@ -1,6 +1,7 @@
-'''Solution to advent of code day 5 2023
-'''
+"""Solution to advent of code day 5 2023"""
+
 import re
+
 INPUT_FILE = "inputs/day_5_input.txt"
 TEST_FILE = "inputs/day_5_test_input.txt"
 
@@ -32,7 +33,7 @@ class Map:
             overlap, curr = split_range(curr, sr)
             if overlap == tuple():
                 continue
-            mapped_ranges.append((overlap[0] + change, overlap[1]+change))
+            mapped_ranges.append((overlap[0] + change, overlap[1] + change))
             if curr == tuple():
                 break
         if curr != tuple():
@@ -54,14 +55,14 @@ def load_file(filename: str) -> tuple[list[int], list[Map]]:
 
     with open(filename, "r") as f:
         lines = f.readlines()
-    lines = [l.replace('\n', '') for l in lines]
+    lines = [l.replace("\n", "") for l in lines]
     return process_lines(lines)
 
 
 def process_lines(lines: str) -> tuple[list[int], list[Map]]:
     """Splits lines up into a list of seeds and a list of maps"""
 
-    seeds = [int(i) for i in lines[0].split('seeds: ')[-1].split(' ')]
+    seeds = [int(i) for i in lines[0].split("seeds: ")[-1].split(" ")]
 
     maps = []
     curr = False
@@ -73,10 +74,10 @@ def process_lines(lines: str) -> tuple[list[int], list[Map]]:
             else:
                 maps.append(curr)
         elif line[-4:] == "map:":
-            names = re.match(r'(\w+)-to-(\w+) map:', line)
+            names = re.match(r"(\w+)-to-(\w+) map:", line)
             curr = Map(names.group(1), names.group(2))
         else:
-            details = [int(i) for i in line.split(' ')]
+            details = [int(i) for i in line.split(" ")]
             curr.add_rule(*details)
             if len(lines[1:]) == i + 1:
                 maps.append(curr)
@@ -91,19 +92,18 @@ def split_range(range1: tuple, range2: tuple) -> tuple:
         return range1, tuple()
     elif range1[0] in range(*range2):
         return (range1[0], range2[1]), (range2[1], range1[1])
-    elif range1[1]-1 in range(*range2):
+    elif range1[1] - 1 in range(*range2):
         return (range2[0], range1[1]), (range1[0], range2[0])
     return tuple(), range1
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     seeds, maps = load_file(filename)
     positions = []
     for seed in seeds:
         pos = seed
         for m in maps:
-
             pos = m.get_destination(pos)
 
         positions.append(pos)
@@ -111,14 +111,14 @@ def one_star(filename: str):
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     seed_line, maps = load_file(filename)
     seed_ranges = []
     for i, s in enumerate(seed_line[:-1]):
         if i % 2 != 0:
             continue
-        limit = seed_line[i+1]
-        seed_ranges += [(s, s+limit)]
+        limit = seed_line[i + 1]
+        seed_ranges += [(s, s + limit)]
 
     positions = []
     for r in seed_ranges:
@@ -127,7 +127,8 @@ def two_star(filename: str):
             mapped_ranges = []
             for pos_range in pos_ranges:
                 mapped_ranges += m.get_destination_from_range(
-                    start=pos_range[0], end=pos_range[1])
+                    start=pos_range[0], end=pos_range[1]
+                )
             pos_ranges = mapped_ranges
 
         positions += [min(pos_ranges, key=lambda x: x[0])]
