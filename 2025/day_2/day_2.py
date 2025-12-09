@@ -5,21 +5,6 @@ INPUT_FILE = "inputs/day_2_input.txt"
 TEST_FILE = "inputs/day_2_test_input.txt"
 
 
-def is_repeated_twice(id: int) -> bool:
-    """Return True if an id contains a sequence of digits repeated twice"""
-    txt = str(id)
-    # immediately filter out cases with non-even lengths
-    if len(txt) % 2 != 0:
-        return False
-    substring_length = len(txt) // 2
-    return txt[:substring_length] == txt[substring_length:]
-
-
-def get_multiples_of_11(s: int, e: int):
-    """Return the multiples of 11 within a range [s,e] - inclusive"""
-    curr = 11 * (s//11 + 1) if s % 11 != 0 else ...
-
-
 def parse_range(range_str: str) -> tuple[int, int]:
     """Returnt the first and last IDs in a range"""
     nums = range_str.split('-')
@@ -34,16 +19,58 @@ def load_file(filename: str) -> list[str]:
         yield parse_range(r)
 
 
+def get_upper_half_pattern_bound(maximum: int, numrepeats: int) -> int | None:
+    """get the maximum pattern X that can be repeated X * numrepeats such that it is
+    still <= maximum"""
+    ndigits = len(str(maximum))
+
+    if ndigits % numrepeats != 0:
+        maximum = 10**(ndigits - 1) - 1
+        ndigits -= 1
+        if ndigits <= 0:
+            return None
+
+    maxpattern = str(maximum)[:ndigits//numrepeats]
+
+    if int(maxpattern * numrepeats) > maximum:
+        return int(maxpattern)-1
+
+    return int(maxpattern)
+
+
+def get_lower_half_pattern_bound(minimum: int, numrepeats: int) -> int | None:
+    """get the maximum pattern X that can be repeated X * numrepeats such that it is
+    still <= maximum"""
+    ndigits = len(str(minimum))
+
+    if ndigits % numrepeats != 0:
+        minimum = 10**(ndigits)
+        ndigits += 1
+
+    minpattern = str(minimum)[:ndigits//numrepeats]
+
+    if int(minpattern * numrepeats) < minimum:
+        return int(minpattern) + 1
+
+    return int(minpattern)
+
+
+def get_all_possible_invalid_ids(start: int, end: int, num_repeats: int = 2):
+    """Get all invalid IDs
+    in a range [start, end] that have num_repeats"""
+    uh = get_upper_half_pattern_bound(end, num_repeats)
+    lh = get_lower_half_pattern_bound(start, num_repeats)
+    if lh <= uh:
+        return [int(str(p) * num_repeats) for p in range(lh, uh + 1)]
+    return []
+
+
 def one_star(filename: str):
     """Returns the one star solution"""
-    sum = 0
+    total = 0
     for rng in load_file(filename):
-        print(f'rng = {rng}')
-        for id in range(*rng):
-            if is_repeated_twice(id):
-                print(f'id {id} is invalid')
-                sum += id
-    return sum
+        total += sum(get_all_possible_invalid_ids(rng[0], rng[1], 2))
+    return total
 
 
 def two_star(filename: str):
