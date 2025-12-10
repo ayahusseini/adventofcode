@@ -1,6 +1,4 @@
 """Solution to advent of code day 1 2025"""
-import regex as re
-
 INPUT_FILE = "inputs/day_2_input.txt"
 TEST_FILE = "inputs/day_2_test_input.txt"
 
