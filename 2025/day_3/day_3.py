@@ -48,7 +48,8 @@ def one_star(filename: str):
 
 def two_star(filename: str):
     """Solve part 2 for day 3."""
-    return
+    banks = load_file(filename)
+    return sum([get_largest_num(12, b) for b in banks])
 
 
 if __name__ == "__main__":
