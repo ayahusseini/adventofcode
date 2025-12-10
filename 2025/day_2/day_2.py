@@ -65,6 +65,16 @@ def get_all_possible_invalid_ids(start: int, end: int, num_repeats: int = 2):
     return []
 
 
+def get_all_multiples(num: int) -> list:
+    """Return all multiples of num"""
+    multiples = []
+    for lower in range(1, int(num**(.5)//1) + 2):
+        if num % lower == 0:
+            higher = num // lower
+            multiples += [lower, higher]
+    return multiples
+
+
 def one_star(filename: str):
     """Returns the one star solution"""
     total = 0
@@ -75,7 +85,23 @@ def one_star(filename: str):
 
 def two_star(filename: str):
     """Returns the two star solution"""
-    return
+    total = 0
+    for rng in load_file(filename):
+        ndigits = (len(str(rng[0])), len(str(rng[1])))
+        invalid_ids = set()
+        if ndigits[0] == ndigits[1]:
+            possible_reps = get_all_multiples(ndigits[0])
+        else:
+            possible_reps = get_all_multiples(
+                ndigits[0]) + get_all_multiples(ndigits[1])
+
+        for nreps in set(possible_reps):
+            if nreps == 1:
+                continue
+            invalid_ids.update(
+                get_all_possible_invalid_ids(rng[0], rng[1], nreps))
+        total += sum(invalid_ids)
+    return total
 
 
 if __name__ == "__main__":
