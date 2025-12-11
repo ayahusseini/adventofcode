@@ -1,6 +1,6 @@
 # README
 
-The main folders contain solutions to https://adventofcode.com/ problems ordered by year. Inputs and test inputs can be found within the `inputs/` folder of each year. Test files are named `test_day_{x}.py`. Solution files are named `day_{x}.py`. A general template can be found in `template/`
+The main folders contain solutions to https://adventofcode.com/ problems, by year. Inputs and test inputs can be found within the `inputs/` folder of each year. Test files are named `test_day_{x}.py`. Solution files are named `day_{x}.py`. A general template can be found in `template/`
 
 ## Current progress
 
@@ -11,8 +11,8 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 |2022|4|
 |2023|15|
 |2024|24|
-|2025|2|
-|**Total**|**104** ⭐ |
+|2025|10|
+|**Total**|**112** ⭐ |
 
 ## Setup 
 
@@ -23,7 +23,7 @@ The main folders contain solutions to https://adventofcode.com/ problems ordered
 0. If you haven't, install UV: `curl -LsSf https://astral.sh/uv/install.sh | sh` (or see [installation instructions](https://github.com/astral-sh/uv#installation))
 1. Install dependencies: `uv sync`
 2. `cd` into the correct folder `cd YYYY/day_x/`
-3. Run code: `uv run python3 day_x.py` 
+3. Run code: `uv run day_x.py` 
 4. Run tests: `uv run pytest -vv` 
 
 

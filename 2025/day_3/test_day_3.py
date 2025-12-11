@@ -9,14 +9,17 @@ def mock_banks():
     return load_file(TEST_FILE)
 
 
-@pytest.mark.parametrize("idx, bank, room, exp", [
-    (0, [1, 8, 9], 0, (2, 9)),
-    (0, [9, 8, 1], 0, (0, 9)),
-    (0, [1, 8, 9], 1, (1, 8)),
-    (1, [1, 8, 9], 0, (2, 9)),
-    (1, [9, 8, 1], 0, (1, 8)),
-    (1, [1, 8, 9], 1, (1, 8)),
-])
+@pytest.mark.parametrize(
+    "idx, bank, room, exp",
+    [
+        (0, [1, 8, 9], 0, (2, 9)),
+        (0, [9, 8, 1], 0, (0, 9)),
+        (0, [1, 8, 9], 1, (1, 8)),
+        (1, [1, 8, 9], 0, (2, 9)),
+        (1, [9, 8, 1], 0, (1, 8)),
+        (1, [1, 8, 9], 1, (1, 8)),
+    ],
+)
 def test_get_next_digit(idx, bank, room, exp):
     assert get_next_digit(idx, bank, room) == exp
 

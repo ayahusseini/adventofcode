@@ -1,5 +1,7 @@
 """Solution to advent of code day 4 2025"""
+
 import numpy as np
+
 INPUT_FILE = "inputs/day_4_input.txt"
 TEST_FILE = "inputs/day_4_test_input.txt"
 
@@ -14,19 +16,18 @@ def load_file(filename: str):
 
 def get_neighbourhood(rows: int, cols: int, r: int, c: int) -> tuple:
     """Get the neighbourhood around (r,c) in an array of shape (rows, cols)
-    Return the neighbourhood as the slice parameters rstart, rend, cstart, cend """
+    Return the neighbourhood as the slice parameters rstart, rend, cstart, cend"""
     rstart, rend = max(0, r - 1), min(rows, r + 1)
     cstart, cend = max(0, c - 1), min(cols, c + 1)
     return rstart, rend, cstart, cend
 
 
 def get_true_neighbour_count(arr: np.ndarray) -> np.ndarray:
-    """Given arr, a 2D boolean array, return an array 
+    """Given arr, a 2D boolean array, return an array
     where the entry at (r,c) shows how many '1' neighbours it has
     in arr.
     """
-
-    padded = np.pad(arr, 1, mode='constant', constant_values=0)
+    padded = np.pad(arr, 1, mode="constant", constant_values=0)
     neighbours = np.zeros_like(padded)
     for dr in (-1, 0, 1):
         for dc in (-1, 0, 1):
@@ -41,7 +42,9 @@ def meets_condition(is_roll: np.ndarray, neighbours: np.ndarray) -> np.ndarray:
     return (neighbours < 4) & (is_roll != 0)
 
 
-def remove_rolls(remove_roll: np.ndarray, is_roll: np.ndarray, neighbours: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+def remove_rolls(
+    remove_roll: np.ndarray, is_roll: np.ndarray, neighbours: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
     """updates is_roll and neighbours by removing all removable rolls"""
     removable_neighbourhood = get_true_neighbour_count(remove_roll.astype(int))
     is_roll[remove_roll] = 0  # boolean mask; clears removable rolls

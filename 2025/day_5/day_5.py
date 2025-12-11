@@ -48,16 +48,19 @@ def merge_all_ranges(ranges: list[list]) -> list[list]:
 def one_star(filename: str):
     """Solve part 1 for day 5."""
     ranges, ids = load_file(filename)
-    return ranges, ids
+    merged = merge_all_ranges(ranges)
+    return sum(1 for r in merged for i in ids if i in range(r[0], r[1] + 1))
 
 
 def two_star(filename: str):
     """Solve part 2 for day 5."""
     ranges, ids = load_file(filename)
+    merged = merge_all_ranges(ranges)
+    return sum(r[1] - r[0] + 1 for r in merged)
 
 
 if __name__ == "__main__":
     print(f"One star test solution is {one_star(TEST_FILE)}")
-    # print(f"Two star test solution is {two_star(TEST_FILE)}")
-    # print(f"One star solution is {one_star(INPUT_FILE)}")
-    # print(f"Two star solution is {two_star(INPUT_FILE)}")
+    print(f"Two star test solution is {two_star(TEST_FILE)}")
+    print(f"One star solution is {one_star(INPUT_FILE)}")
+    print(f"Two star solution is {two_star(INPUT_FILE)}")

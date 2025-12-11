@@ -10,16 +10,15 @@ TEST_FILE = "inputs/day_3_test_input.txt"
 def load_file(filename: str) -> list[list[int]]:
     """Load the puzzle input, yielding stripped lines."""
     with open(filename, "r") as f:
-        return [[int(char) for char in line.strip()]
-                for line in f if line.strip()]
+        return [[int(char) for char in line.strip()] for line in f if line.strip()]
 
 
 def get_next_digit(idx: int, bank: list[int], leave_room: int) -> tuple[int, int]:
-    """Get the next highest digit from bank, starting from idx 
-    leave_room is how much room to leave at the end for remaining digits. 
+    """Get the next highest digit from bank, starting from idx
+    leave_room is how much room to leave at the end for remaining digits.
     Returns the next digit and its index
     """
-    options = bank[idx:len(bank) - leave_room]
+    options = bank[idx : len(bank) - leave_room]
     nextdigit = max(options)
     for j, digit in enumerate(options):
         if nextdigit == digit:
@@ -27,7 +26,7 @@ def get_next_digit(idx: int, bank: list[int], leave_room: int) -> tuple[int, int
 
 
 def get_largest_num(ndigits: int, all_digits: list[int]) -> int:
-    """Get the largest number that can be formed of ndigits, 
+    """Get the largest number that can be formed of ndigits,
     selected in the order they appear from bank
     """
     digits = ""

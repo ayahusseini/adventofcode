@@ -1,5 +1,4 @@
-'''Solution to advent of code day 13 2024
-'''
+"""Solution to advent of code day 13 2024"""
 
 INPUT_FILE = "inputs/day_13_input.txt"
 TEST_FILE = "inputs/day_13_test_input.txt"
@@ -7,10 +6,9 @@ DIRECTIONS = [1j, -1j, 1, -1]
 
 
 class Machine:
-    def __init__(self, button_A: tuple, button_B: tuple, prize:):
+    def __init__(self, button_A: tuple, button_B: tuple, prize):
         self.A = button_A
         self.B = button_B
-    def
 
 
 def load_file(filename: str) -> dict[tuple, str]:
@@ -25,7 +23,7 @@ def read_lines(lines: list[str]) -> dict[tuple, str]:
     positions = dict()
     for r, line in enumerate(lines):
         for c, char in enumerate(line.strip()):
-            positions[r + c*1j] = char
+            positions[r + c * 1j] = char
     return positions
 
 
@@ -35,7 +33,7 @@ def rotate_90_ccw(vec):
 
 
 def dfs(start_idx, all_positions: dict, visited: set) -> tuple[int, int, int]:
-    """Returns the area, perimeter, and number of sides of the region. 
+    """Returns the area, perimeter, and number of sides of the region.
     The exploration starts at start_idx and only considers univisited positions.
     The set of visited positions is updated."""
 
@@ -57,8 +55,10 @@ def dfs(start_idx, all_positions: dict, visited: set) -> tuple[int, int, int]:
 
             if (n not in all_positions) or (all_positions[n] != char):
                 perimeter += 1
-                if all_positions.get(n + rotate_90_ccw(dir)) == char or all_positions.get(current + rotate_90_ccw(dir)) != char:
-
+                if (
+                    all_positions.get(n + rotate_90_ccw(dir)) == char
+                    or all_positions.get(current + rotate_90_ccw(dir)) != char
+                ):
                     sides += 1
                 continue
             if n not in visited:
@@ -86,14 +86,14 @@ def find_all_regions(positions: dict) -> list[tuple[str, int, int]]:
 
 
 def one_star(filename: str):
-    '''Returns the one star solution'''
+    """Returns the one star solution"""
     pos = load_file(filename)
     regions = find_all_regions(pos)
     return sum([area * perimeter for _, area, perimeter, _ in regions])
 
 
 def two_star(filename: str):
-    '''Returns the two star solution'''
+    """Returns the two star solution"""
     pos = load_file(filename)
     regions = find_all_regions(pos)
     return sum([area * sides for _, area, _, sides in regions])
