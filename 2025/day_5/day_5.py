@@ -10,8 +10,8 @@ def load_file(filename: str) -> tuple[list, list]:
     ids = []
     with open(filename, "r") as f:
         for line in f:
-            if '-' in line:
-                rng_text = line.strip().split('-')
+            if "-" in line:
+                rng_text = line.strip().split("-")
                 rngs.append([int(rng_text[0]), int(rng_text[1])])
             elif not line.strip():
                 continue
@@ -40,8 +40,7 @@ def merge_all_ranges(ranges: list[list]) -> list[list]:
     mutually_exclusive = [ranges[0]]
     for right in ranges[1:]:
         left = mutually_exclusive.pop()
-        mutually_exclusive += merge_two_ranges(left,
-                                               right, already_sorted=True)
+        mutually_exclusive += merge_two_ranges(left, right, already_sorted=True)
     return mutually_exclusive
 
 

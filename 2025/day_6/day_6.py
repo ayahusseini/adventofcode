@@ -1,4 +1,5 @@
 """Solution to advent of code day 6 2025"""
+
 import re
 import numpy as np
 import operator as op
@@ -6,10 +7,7 @@ import operator as op
 INPUT_FILE = "inputs/day_6_input.txt"
 TEST_FILE = "inputs/day_6_test_input.txt"
 
-OPERATORS = {
-    "+": op.add,
-    "*": op.mul
-}
+OPERATORS = {"+": op.add, "*": op.mul}
 
 
 def load_file(filename: str, sep_all_chars: bool = False):
@@ -21,16 +19,17 @@ def load_file(filename: str, sep_all_chars: bool = False):
                 operator = re.sub(r"\s+", " ", l.strip()).split(" ")
             elif l.strip():
                 if sep_all_chars:
-                    cleaned = list(l.replace('\n', ''))
+                    cleaned = list(l.replace("\n", ""))
                 else:
                     cleaned = re.sub(r"\s+", " ", l.strip()).split(" ")
-                nums.append(
-                    [int(char) if char.strip() else np.nan for char in cleaned])
+                nums.append([int(char) if char.strip() else np.nan for char in cleaned])
 
     return operator, np.array(nums)
 
 
-def combine_list(row: np.ndarray, operator: str, operator_mapping: dict = OPERATORS) -> int:
+def combine_list(
+    row: np.ndarray, operator: str, operator_mapping: dict = OPERATORS
+) -> int:
     """Return the combination of a row according to operator"""
     if len(row) == 0:
         return 0
@@ -73,8 +72,7 @@ def two_star(filename: str):
             curr_nums = []
             continue
 
-        num = int(''.join(str(int(digit))
-                  for digit in col if not np.isnan(digit)))
+        num = int("".join(str(int(digit)) for digit in col if not np.isnan(digit)))
 
         curr_nums.append(num)
 
