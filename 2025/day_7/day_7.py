@@ -1,4 +1,7 @@
 """Solution to advent of code day 7 2025"""
+import numpy as np
+from numpy.typing import NDArray
+
 INPUT_FILE = "inputs/day_7_input.txt"
 TEST_FILE = "inputs/day_7_test_input.txt"
 
@@ -25,6 +28,22 @@ def is_diag(idx1: tuple[int, int], idx2: tuple[int, int]):
     r1, c1 = idx1
     r2, c2 = idx2
     return abs(r1 - r2) == 1 and abs(c1 - c2) == 1
+
+
+def get_next_to_splitter(is_splitter: NDArray[np.int_ | np.bool_]) -> NDArray[np.int_]:
+    """Return an array which is 1 at all positions to the left or right
+    of a splitter"""
+    is_splitter = is_splitter.astype(bool)
+
+    if is_splitter.ndim == 1:
+        is_splitter = is_splitter[np.newaxis, :]
+
+    padded = np.pad(is_splitter, pad_width=1,
+                    mode='constant', constant_values=0)
+
+    left_roll = padded[1:-1, 2:]
+    right_roll = padded[1:-1, :-2]
+    return (((left_roll) | (right_roll)) & (~is_splitter)).astype(int)
 
 
 def one_star(filename: str):
