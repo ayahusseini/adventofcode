@@ -11,3 +11,14 @@ dependencies = [
     "regex>=2025.11.3",
     "ruff>=0.14.7",
 ]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.format]
+# Enable auto-formatting of code examples in docstrings.
+# Supports Markdown, reStructuredText code/literal blocks and doctests.
+docstring-code-format = true
+docstring-code-line-length = 20
+quote-style = "single"
+indent-style = "tab"

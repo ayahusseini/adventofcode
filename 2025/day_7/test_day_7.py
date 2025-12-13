@@ -1,68 +1,79 @@
 import numpy as np
 import pytest
 
-from day_7 import TEST_FILE, load_file, is_diag, get_next_to_splitter
+from day_7 import TEST_FILE, load_file, num_ways_to_reach, num_ways_to_reach_next_row
 
 
 @pytest.fixture
 def mock_input():
-    return load_file(TEST_FILE)
+	return load_file(TEST_FILE)
+
+
+def test_load(mock_input):
+	is_beam, is_splitter = mock_input
+	print(is_beam)
+	assert is_beam[0] == [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
 
 
 @pytest.mark.parametrize(
-    "arr, expected",
-    [
-        # 1. No splitters
-        (np.array([[False, False, False]]), np.array([[0, 0, 0]])),
-        # 2. Single splitter in the middle
-        (np.array([[False, True, False]]), np.array([[1, 0, 1]])),
-        # 3. Splitter at start
-        (np.array([True, False, False]), np.array([[0, 1, 0]])),
-        # 4. Splitter at end
-        (np.array([[False, False, True]]), np.array([[0, 1, 0]])),
-        # 5. Two separated splitters
-        (np.array([[True, False, True, False]]), np.array([[0, 1, 0, 1]])),
-        # 6. Adjacent splitters
-        (np.array([[True, True, False]]), np.array([[0, 0, 1]])),
-        # 7. Multiple splitters in larger array
-        (
-            np.array([[False, True, False, True, False, False, True]]),
-            np.array([[1, 0, 1, 0, 1, 1, 0]]),
-        ),
-        # 8. Multiple splitters in multi-row array
-        (
-            np.array([[0, 0, 1], [1, 1, 0], [1, 1, 1], [1, 0, 1]]),
-            np.array([[0, 1, 0], [0, 0, 1], [0, 0, 0], [0, 1, 0]]),
-        ),
-    ],
+	'above, is_splitter, exp',
+	[
+		# No above beams
+		([0, 0, 0], [1, 0, 0], 0),
+		([0, 0, 0], [0, 0, 0], 0),
+		# Central above beams
+		([0, 1, 0], [1, 0, 0], 1),
+		([0, 1, 0], [0, 1, 0], 0),
+		([0, 2, 0], [1, 0, 0], 2),
+		([0, 1, 0], [0, 1, 1], 0),
+		# Left above beams
+		([1, 0, 0], [1, 0, 0], 1),
+		([1, 0, 0], [0, 1, 0], 0),
+		([2, 0, 0], [1, 0, 0], 2),
+		# Right above beams
+		([0, 0, 2], [0, 1, 0], 0),
+		([0, 0, 2], [0, 0, 1], 2),
+		# Beams and multiple splitters
+		([0, 0, 2], [1, 0, 1], 2),
+		([3, 0, 2], [1, 0, 1], 5),
+		([0, 1, 2], [0, 0, 1], 3),
+	],
 )
-def test_get_next_to_splitter(arr, expected):
-    result = get_next_to_splitter(arr)
-    np.testing.assert_array_equal(result, expected)
+def test_num_ways_to_reach(above, is_splitter, exp):
+	ways, splits = num_ways_to_reach(above, is_splitter)
+	assert ways == exp
 
 
 @pytest.mark.parametrize(
-    "idx1, idx2, expected",
-    [
-        # True cases (direct diagonal)
-        ((0, 0), (1, 1), True),
-        ((1, 1), (0, 0), True),
-        ((5, 3), (4, 2), True),
-        ((2, 7), (3, 6), True),
-        ((0, 0), (-1, 1), True),
-        ((0, 0), (1, -1), True),
-        ((0, 0), (-1, -1), True),
-        # False cases – same row or same column
-        ((0, 0), (0, 1), False),
-        ((3, 3), (4, 3), False),
-        ((5, 5), (5, 5), False),
-        # False cases – diagonal but not *directly* (distance > 1)
-        ((0, 0), (2, 2), False),
-        ((4, 4), (6, 6), False),
-        # False cases – only one coordinate differs by 1
-        ((1, 1), (2, 3), False),
-        ((3, 5), (4, 7), False),
-    ],
+	'above, is_splitter, exp',
+	[
+		# No above beams
+		([0, 0, 0], [1, 0, 0], [0, 0, 0]),
+		([0, 0, 0], [0, 0, 0], [0, 0, 0]),
+		# Central above beams
+		([0, 1, 0], [1, 0, 0], [0, 1, 0]),
+		([0, 1, 0], [0, 1, 0], [1, 0, 1]),
+		([0, 2, 0], [1, 0, 0], [0, 2, 0]),
+		([0, 1, 0], [0, 1, 1], [1, 0, 0]),
+		# Left above beams
+		([1, 0, 0], [1, 0, 0], [0, 1, 0]),
+		([1, 0, 0], [0, 1, 0], [1, 0, 0]),
+		([2, 0, 0], [1, 0, 0], [0, 2, 0]),
+		# Right above beams
+		([0, 0, 2], [0, 1, 0], [0, 0, 2]),
+		([0, 0, 2], [0, 0, 1], [0, 2, 0]),
+		# Beams and multiple splitters
+		([0, 0, 2], [1, 0, 1], [0, 2, 0]),
+		([3, 0, 2], [1, 0, 1], [0, 5, 0]),
+		([0, 1, 2], [0, 0, 1], [0, 3, 0]),
+		# Large row
+		(
+			[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0],
+		),
+	],
 )
-def test_is_diag(idx1, idx2, expected):
-    assert is_diag(idx1, idx2) == expected
+def test_num_ways_to_reach_next_row(above, is_splitter, exp):
+	ways, splits = num_ways_to_reach_next_row(above, is_splitter)
+	assert ways == exp

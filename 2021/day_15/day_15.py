@@ -2,71 +2,71 @@
 
 import numpy as np
 
-INPUT_FILE = "inputs/day_15_input.txt"
-TEST_FILE = "inputs/day_15_test_input.txt"
+INPUT_FILE = 'inputs/day_15_input.txt'
+TEST_FILE = 'inputs/day_15_test_input.txt'
 
 
 class Grid:
-    def __init__(self, array: np.ndarray, allow_diag: bool = False):
-        """Instangiate a map of caves"""
-        self.array = array
-        self.nrows, self.ncols = array.shape
+	def __init__(self, array: np.ndarray, allow_diag: bool = False):
+		"""Instangiate a map of caves"""
+		self.array = array
+		self.nrows, self.ncols = array.shape
 
-        self.directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        if allow_diag:
-            self.directions.extend([(1, 1), (-1, -1)])
+		self.directions = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+		if allow_diag:
+			self.directions.extend([(1, 1), (-1, -1)])
 
-    def min_path_length(self, start: tuple, end: tuple):
-        """Returns the minimum path length"""
+	def min_path_length(self, start: tuple, end: tuple):
+		"""Returns the minimum path length"""
 
-        dist = np.full_like(self.array, fill_value=np.inf)
-        visited = np.full_like(self.array, fill_value=False, dtype=bool)
+		dist = np.full_like(self.array, fill_value=np.inf)
+		visited = np.full_like(self.array, fill_value=False, dtype=bool)
 
-        dist[*start] = 0
+		dist[*start] = 0
 
-        while not visited[*end]:
-            temp_distances = dist.copy().astype(float)
-            temp_distances[visited] = np.inf
-            node = np.unravel_index(temp_distances.argmin(), shape=temp_distances.shape)
-            node_value = temp_distances[node]
+		while not visited[*end]:
+			temp_distances = dist.copy().astype(float)
+			temp_distances[visited] = np.inf
+			node = np.unravel_index(temp_distances.argmin(), shape=temp_distances.shape)
+			node_value = temp_distances[node]
 
-            visited[*node] = True
-            for dir in self.directions:
-                r, c = node[0] + dir[0], node[1] + dir[1]
-                if r < 0 or c < 0 or r >= self.nrows or c >= self.ncols:
-                    continue
-                possible_update = self.array[r, c] + node_value
-                if possible_update < dist[r, c]:
-                    dist[r, c] = possible_update
+			visited[*node] = True
+			for dir in self.directions:
+				r, c = node[0] + dir[0], node[1] + dir[1]
+				if r < 0 or c < 0 or r >= self.nrows or c >= self.ncols:
+					continue
+				possible_update = self.array[r, c] + node_value
+				if possible_update < dist[r, c]:
+					dist[r, c] = possible_update
 
-        return dist[*end]
+		return dist[*end]
 
 
 def load_file(filename: str) -> np.ndarray:
-    """Loads the file as a numpy array"""
+	"""Loads the file as a numpy array"""
 
-    with open(filename, "r") as f:
-        lines = f.readlines()
+	with open(filename, 'r') as f:
+		lines = f.readlines()
 
-    return np.array([[int(digit) for digit in l.strip()] for l in lines if l.strip()])
+	return np.array([[int(digit) for digit in l.strip()] for l in lines if l.strip()])
 
 
 def one_star(filename: str):
-    """Returns the one star solution"""
-    grid_values = load_file(filename)
-    grid = Grid(grid_values)
+	"""Returns the one star solution"""
+	grid_values = load_file(filename)
+	grid = Grid(grid_values)
 
-    return grid.min_path_length([0, 0], [grid.nrows - 1, grid.ncols - 1])
+	return grid.min_path_length([0, 0], [grid.nrows - 1, grid.ncols - 1])
 
 
 def two_star(filename: str):
-    """Returns the two star solution"""
+	"""Returns the two star solution"""
 
-    return
+	return
 
 
-if __name__ == "__main__":
-    print(f"One star test solution is {one_star(TEST_FILE)}")
-    print(f"Two star test solution is {two_star(TEST_FILE)}")
-    print(f"One star solution is {one_star(INPUT_FILE)}")
-    # print(f"Two star solution is {two_star(INPUT_FILE)}")
+if __name__ == '__main__':
+	print(f'One star test solution is {one_star(TEST_FILE)}')
+	print(f'Two star test solution is {two_star(TEST_FILE)}')
+	print(f'One star solution is {one_star(INPUT_FILE)}')
+	# print(f"Two star solution is {two_star(INPUT_FILE)}")
