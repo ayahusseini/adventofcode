@@ -11,8 +11,8 @@ The main folders contain solutions to https://adventofcode.com/ problems, by yea
 |2022|4|
 |2023|15|
 |2024|24|
-|2025|14|
-|**Total**|**116** ⭐ |
+|2025|16|
+|**Total**|**118** ⭐ |
 
 ## Setup 
 
